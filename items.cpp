@@ -1,6 +1,6 @@
 #include "items.h"
 
-const Item ITEM_LIST[]={
+const Item ITEMS_LIST[]={
     { WEAPON, "Iron Sword", 8},
     { WEAPON, "Steel Sword", 15},
     { WEAPON, "Shadow Blade", 25},
@@ -14,4 +14,4 @@ const Item ITEM_LIST[]={
     { LOOT, "Ancient Relic", 50},
     { LOOT, "Great Rune of Kings", 100}
 };
-const int NUM_ITEMS=sizeof(ITEM_LIST)/sizeof(ITEM_LIST[0]);
+const int NUM_ITEMS=sizeof(ITEMS_LIST)/sizeof(ITEMS_LIST[0]);
