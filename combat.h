@@ -4,14 +4,12 @@
 #include "types.h"
 #include "items.h"
 #include <string>
-using namespace std;
-
 
 int calculateDamage(int attack, int defense);
 
-void turn_change(string &turn);
+void turn_change(std::string &turn);
 
-void randomize_start(string &turn);
+void randomize_start(std::string &turn);
 
 void removeItem(Player &player, int itemNo);
 
