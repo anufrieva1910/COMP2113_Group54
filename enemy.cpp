@@ -43,12 +43,12 @@ enemy* spawnEnemies(int floor, int difficulty, int& count) {
 }
 
 // Cleanup
-void cleanupEnemies(Enemy* enemies) {
+void cleanupEnemies(enemy* enemies) {
     delete[] enemies;
 }
 
 // Cerberus phase transitions
-void updateCerberusPhase(Enemy& cerberus) {
+void updateCerberusPhase(enemy& cerberus) {
     if (cerberus.isBoss) {
         if (cerberus.hp <= cerberus.maxHP * 0.66 && cerberus.phase == 1) {
             cerberus.attack += 5;
