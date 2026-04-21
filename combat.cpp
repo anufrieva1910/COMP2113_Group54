@@ -90,8 +90,56 @@ void random_lootdrop(Player &player, Enemy enemy) {
     cout << "You found " << loot.name << " from " << enemy.name << endl;
 }
 
-void boss_combat(Player &player, Enemy &enemy) {
-    //to be designed
+void boss_combat(Player &player, Enemy &boss) {
+    string turn="enemy";
+    bool phase_two=false, phase_three=false;
+    while(player.hp>0 and boss.hp>0) {
+        if (turn=="player") {
+            int move;
+            cin >> move;
+            switch (move) {
+                case 1: {
+                    int damage=calculateDamage(player.attack,boss.defense);
+                    boss.hp-=damage;
+                    //attack boss ui
+                    break;
+                }
+                case 2: {
+                    useItem(player);
+                    break;
+                }
+                default: {
+                    cout << "Invalid input" << endl;
+                    break;
+                }
+            }
+            if (!phase_two && boss.hp<=boss.maxHp*2/3 && boss.hp>boss.maxHp/3) {
+                //boss phase 2 ui
+                boss.phase=2;
+                boss.attack=25;
+                boss.defense=15;
+                phase_two=true;
+            }
+            else if(!phase_three && boss.hp<=boss.maxHp/3) {
+                //boss phase 3 ui
+                boss.phase=3;
+                boss.attack=30;
+                boss.defense=10;
+                phase_three=true;
+            }
+        }
+        else if (turn=="enemy") {
+            int damage=calculateDamage(boss.attack,player.defense);
+            player.hp-=damage;
+        }
+        turn_change(turn);
+    }
+    if (player.hp<=0) {
+        //game over
+    }
+    else {
+        //end game; win ui
+    }
 }
 
 void encounter_combat(Player &player, Enemy &enemy) {
@@ -110,6 +158,7 @@ void encounter_combat(Player &player, Enemy &enemy) {
                 case 1: {
                     int damage=calculateDamage(player.attack,enemy.defense);
                     enemy.hp-=damage;
+                    //attack ui
                     break;
                 }
                 case 2: {
@@ -139,6 +188,7 @@ void encounter_combat(Player &player, Enemy &enemy) {
         }
         turn_change(turn);
         if (flee) {
+            //back to map ui
             break;
         }
     }
