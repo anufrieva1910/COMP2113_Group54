@@ -4,14 +4,16 @@ using namespace std;
 
 // Enemy definitions by floor range
 enemy getEnemyForFloor(int floor) {
-    if (floor >= 1 && floor <= 3) {
-        return {"Cave Rat", 15, 15, 3, 1, false, 1};
-    } else if (floor >= 4 && floor <= 6) {
-        return {"Wild Dog", 30, 30, 7, 3, false, 1};
-    } else if (floor >= 7 && floor <= 9) {
-        return {"Corrupted Hound", 50, 50, 10, 5, false, 1};
-    } else if (floor == 10) {
-        return {"Cerberus", 150, 150, 15, 8, true, 1};
+    if (floor ==1) {
+        return {"Bat Swarm", 12, 6, 3, false, 1};
+    } else if (floor ==2) {
+        return {"Cave Rats", 15, 7, 4, false, 1};
+    } else if (floor ==3) {
+        return {"Stone Beetle", 30, 8, 5, false, 1};
+    } else if (floor == 4) {
+        return {"Cerberus", 150, 30, 20, true, 1};
+    } else if (floor == 4) {
+        return {"Cerberus", 150, 30, 20, true, 1};
     }
     return {"Unknown", 10, 10, 1, 1, false, 1};
 }
