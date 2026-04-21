@@ -3,7 +3,7 @@
 using namespace std;
 
 // Enemy definitions by floor range
-Enemy getEnemyForFloor(int floor) {
+enemy getEnemyForFloor(int floor) {
     if (floor >= 1 && floor <= 3) {
         return {"Cave Rat", 15, 15, 3, 1, false, 1};
     } else if (floor >= 4 && floor <= 6) {
@@ -17,7 +17,7 @@ Enemy getEnemyForFloor(int floor) {
 }
 
 // Dynamic spawning
-Enemy* spawnEnemies(int floor, int difficulty, int& count) {
+enemy* spawnEnemies(int floor, int difficulty, int& count) {
     count = difficulty + (floor / 2);
     Enemy* enemies = new Enemy[count];
     for (int i = 0; i < count; i++) {
