@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include "combat.h"
 using namespace std;
 
@@ -22,12 +23,18 @@ void turn_change(string &turn) {
     }
 }
 
+void randomize_start(string &turn) {
+    turn= (rand()%2) ? "player" : "enemy";
+}
+
 void useItem(Player &player) {
     cout << player.name << " tried to use an item (not implemented yet)." << endl;
 }
 
 void encounter_combat(Player &player, Enemy &enemy) {
-    string turn = "player";
+    string turn;
+    bool flee=false;
+    randomize_start(turn);
     while(player.hp>0 and enemy.hp>0) {
         if (turn=="player") {
             int move;
@@ -36,12 +43,19 @@ void encounter_combat(Player &player, Enemy &enemy) {
                 case 1:
                     int damage=calculateDamage(player.attack,enemy.defense);
                     enemy.hp-=damage;
-                    cout << enemy.hp << endl;
                     break;
                 case 2:
                     useItem(player);
                     break;
                 case 3:
+                    int random_flee=rand()%2;
+                    if (random_flee) {
+                        flee=true;
+                        cout << "successfully fleed" << endl;
+                    }
+                    else {
+                        cout << "failed to flee" << endl;
+                    }
                     break;
                 default :
                     cout << "Invalid input" << endl;
@@ -51,9 +65,11 @@ void encounter_combat(Player &player, Enemy &enemy) {
         else if (turn=="enemy") {
             int damage=calculateDamage(enemy.attack,player.defense);
             player.hp-=damage;
-            cout << player.hp << endl;
         }
         turn_change(turn);
+        if (flee) {
+            break;
+        }
     }
 }
 
