@@ -39,6 +39,10 @@ void removeItem(Player &player, int itemNo) {
 }
 
 void addItem(Player &player, Item item) {  
+     if (player.inventorySize >= MAX_INVENTORY) {  
+        cout << "Inventory full, item dropped." << endl;
+        return;
+    }
     Item *itemptr=new Item(item);
     player.inventory[player.inventorySize]=itemptr;
     player.inventorySize++;
@@ -93,6 +97,7 @@ void boss_combat(Player &player, Enemy &enemy) {
 void encounter_combat(Player &player, Enemy &enemy) {
     if (enemy.isBoss) {
         boss_combat(player, enemy);
+        return;
     }
     string turn;
     bool flee=false;
@@ -137,7 +142,7 @@ void encounter_combat(Player &player, Enemy &enemy) {
             break;
         }
     }
-    if (player.hp<0) {
+    if (player.hp<=0) {
         //game over
     }
     else {
