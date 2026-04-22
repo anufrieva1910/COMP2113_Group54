@@ -9,12 +9,13 @@ const int TOTAL_FLOORS = 10;
 
 enum Difficulty { EASY, NORMAL, HARD };
 enum RoomType { EMPTY, MONSTER, TREASURE, TRAP, LORE, HIDDEN, PUZZLE, EXIT };
+enum ItemType { WEAPON, SHIELD, POTION, LOOT };
 
 //a single item; weapon or consumable
 struct Item {
+    ItemType type;
     std::string name;
     int value; //atk for weapons, hp heal for consumables
-    bool isWeapon; //true if weapon, false if consumable
 };
 
 //a lore fragment; can be found in lore rooms
