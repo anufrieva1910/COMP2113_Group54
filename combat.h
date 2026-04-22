@@ -12,6 +12,8 @@ void turn_change(string &turn);
 
 void randomize_start(string &turn);
 
+void removeItem(Player &player, int itemNo);
+
 void useItem(Player &player);
 
 void encounter_combat(Player &player, Enemy &enemy);
