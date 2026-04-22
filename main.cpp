@@ -22,10 +22,10 @@ int main() {
 
     // Example: simulate Cerberus fight
     Enemy cerberus = getEnemyForFloor(10);
-    cerberus.hp = 90; // drop HP to trigger phase 2
+    cerberus.hp = 66; // drop HP to trigger phase 2
     updateCerberusPhase(cerberus);
 
-    cerberus.hp = 40; // drop HP to trigger phase 3
+    cerberus.hp = 33; // drop HP to trigger phase 3
     updateCerberusPhase(cerberus);
 
     cleanupEnemies(floorEnemies);
