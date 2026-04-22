@@ -2,10 +2,10 @@
 #define ENEMY_H
 
 #include <string>
-using namespace std;
+
 
 struct enemy{
-  string name;
+  std::string name;
   int hp;
   int attack;
   int defense;
