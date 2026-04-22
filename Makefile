@@ -4,12 +4,12 @@
 
 FLAGS = -pedantic-errors -std=c++11
 TARGET = dungeon
-OBJECTS = main.o player.o dungeon.o combat.o enemy.o puzzle.o ui.o fileio.o
+OBJECTS = main.o player.o dungeon.o combat.o enemy.o puzzle.o ui.o fileio.o items.o
 
 $(TARGET): $(OBJECTS)
 	g++ $(FLAGS) $^ -o $@
 
-main.o: main.cpp player.h dungeon.h combat.h enemy.h puzzle.h ui.h fileio.h types.h
+main.o: main.cpp player.h dungeon.h combat.h enemy.h puzzle.h ui.h fileio.h items.h types.h
 	g++ $(FLAGS) -c $<
 
 player.o: player.cpp player.h types.h
@@ -18,10 +18,13 @@ player.o: player.cpp player.h types.h
 dungeon.o: dungeon.cpp dungeon.h types.h
 	g++ $(FLAGS) -c $<
 
-combat.o: combat.cpp combat.h types.h
+combat.o: combat.cpp combat.h items.h types.h
 	g++ $(FLAGS) -c $<
 
 enemy.o: enemy.cpp enemy.h types.h
+	g++ $(FLAGS) -c $<
+
+items.o: items.cpp items.h types.h
 	g++ $(FLAGS) -c $<
 
 puzzle.o: puzzle.cpp puzzle.h types.h
