@@ -106,9 +106,9 @@ You keep moving.
 [WALL ART]
 It is harD to even call this a piece at this point. The wall
 cArvings are spread across the corridor wall, each new one more
-and more distorted. It seems liKe someone was trying to wRite
-something, or illustrate Someone. It is unclear, as the tExt
-seems purposefully smudged. Something was here. Something that
+and more distoRted. It seems liKe someone was trying to write
+somethiNg, or illustrate someone. It is unclear, as the tExt
+Seems purposefully Smudged. Something was here. Something that
 did not want to be remembered.
 
 [LOST SCHOLAR'S DIARY]
@@ -163,7 +163,7 @@ near the ground, you find a journal. The ink has run in places.
 The handwriting gets worse as the pages go on.
 
 [LOST SCHOLAR'S DIARY]
-...ha... REMEMBER how we met near that river 2 years AGO? Ah...
+...ha... REMEMBER how we met near that river 3 years AGO? Ah...
 YOU were so beautiful. I wish things went differently...
 ...I always knew something was wrong with HER. How could she
 just... betray you?...
@@ -178,20 +178,20 @@ TEXT_END
 FLOOR 7
 TITLE The Last Entry
 TYPE DIARY
-CIPHER FALL
+CIPHER END
 TEXT_START
 You almost miss it. A scrap of parchment, pinned to the wall
 with a fragment of bone. The writing is barely legible. Whoever
 held this pen was not steady when they wrote it.
 
 [LOST SCHOLAR'S DIARY]
-...run... IF you see this... run... please...
-...I am bleeding... God it hurts... I got 2 wounds on my
+...run... if you SEE this... RUN... please...
+...I am bleeding... GOD it hurts... I got 3 wounds on my
 stomach...
 ...please... leave...
 
-..BASTET..
-.....kill her... KILL her... KILL... me...
+..Bastet..
+.....kill her... kill her... kill... me...
 Run...
 Run...
 Run...
@@ -209,7 +209,7 @@ than you planned.
 
 [WALL ART]
 Surprisingly, this piece IS complete. The Golden Hound and the
-Great CERBERUS, facing each other. They seem so different, yet
+Great CERBERUS, 2 of them facing each other. They seem so different, yet
 they carry the same pain in their eyes. They WERE no different.
 They were one. ANCIENT text filled the gaps between the two
 beings.
@@ -238,7 +238,7 @@ The painting shows a beautiful Goddess, embracing the DARK skies
 as her own. Her grace and power spreads EQUALLY all around the
 room. She is surrounded by her people — felines, seemingly
 CASTING ignorance into those who chose to follow her. Unlike the
-first wall art, where The Golden Hound was surrounded by all
+1st wall art, where The Golden Hound was surrounded by all
 kinds of species, the Feline Goddess holds ENOUGH tolerance only
 for one kind. You recognise those hazel eyes and golden ornament.
 IT appeared in previous carvings. THINGS slowly start to make
