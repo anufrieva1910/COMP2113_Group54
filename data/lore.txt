@@ -1,0 +1,351 @@
+# Cerberus's Cave — Lore Fragments
+# Format per entry:
+#   FLOOR <number>
+#   TITLE <title>
+#   TYPE <WALL_ART | DIARY | BOTH>
+#   CIPHER <hidden word>
+#   TEXT_START
+#   <text lines>
+#   TEXT_END
+
+FLOOR 1
+TITLE The Hall of Light
+TYPE BOTH
+CIPHER CANINE
+TEXT_START
+The air shifts the moment you pass the threshold. Stale, heavy,
+like the breath of something that has been waiting for a very
+long time. A torch flickers somewhere ahead. You press forward.
+
+[WALL ART]
+The wall embodies a Colourful piece of a great hall, full of
+vivid light, love and laughter. A God stands in the middle, with
+its Arms open for the people to enjoy its warmth. FeliNes and
+canInes coexist together, celebrating the kindNess of The Golden
+Hound. The lines carved are confident, precise. Whoever stands
+behind this carving has surely recreated an imagE from their own
+memory. Below the carving, there sits an offering bowl, with a
+crack in the middle of it.
+
+[LOST SCHOLAR'S DIARY]
+This is day one of my investigation. I have decided to keep track
+of my findings through this trip. I made it past the entrance.
+The air is already stale, but it is manageable, I guess...
+I have found wall art, a carving. God, it's beautiful. I have
+never seen anything like this before. I will spend some time
+sketching this into my notebook before going forward...
+TEXT_END
+
+FLOOR 2
+TITLE Something Has Changed
+TYPE BOTH
+CIPHER LOST
+TEXT_START
+The walls feel closer here. The torchlight struggles to reach
+the ceiling. You are not sure if it is the darkness pressing in,
+or something else entirely.
+
+[WALL ART]
+A painting of the same halL. Something, however, has changed in
+this One. The Golden Hound... Its head is slightly turned, as if
+trying to hide something. Its previously open arms stand at the
+sides of itS body. Celebration continues, people seem not to
+notice the distress of their God. There stands a figure behind
+the celebration scene, dark and distorTed. Its eyes are locked
+onto The Golden Hound.
+
+[LOST SCHOLAR'S DIARY]
+Day three of this journey. Things seem smooth so far. I have
+found another carving. Something feels off about this one. The
+God I saw earlier seems... in distress. There is a figure I
+noticed in the distance which seems very familiar, even though
+you can barely see it. Something about it feels haunting yet
+familiar... I hope I won't run out of torches, the air is very
+cruel to them...
+TEXT_END
+
+FLOOR 3
+TITLE The Edge of Something
+TYPE BOTH
+CIPHER FEAR
+TEXT_START
+You are aware of the silence before you are aware of anything
+else. No dripping water, no distant echoes. Just a quiet so
+complete it feels like the cave is holding its breath.
+
+[WALL ART]
+The carving shows a cliFf — the same cliff as the one near the
+village. The Golden Hound stands there, with its eyes facing
+forward into the distancE. Hazel eyes emerge from the fog below
+the cliff, locked on the Canine God. The being seems weAk, as if
+slowly losing its power. Lights of the village flicker behind it.
+It does not look back at them. The carving seems distorted.
+WhoeveR made it was clearly in some kind of rush, maybe even
+panic.
+
+[LOST SCHOLAR'S DIARY]
+Day six... Not going to lie, I feel quite exhausted. The air
+feels heavier and heavier, and I still feel like I haven't
+discovered anything.
+There is yet another carving on this floor. This being seems to
+get worse and worse. I recognise those eyes. Hazel... There is
+also a large pawprint in one of the corridors. It is definitely
+not a canine. I feel like I already know the answer, but I really
+do not want to admit it to myself...
+TEXT_END
+
+FLOOR 4
+TITLE Erasure
+TYPE BOTH
+CIPHER DARKNESS
+TEXT_START
+Something scratches at the edge of your hearing. Not a sound,
+exactly. More like the memory of one. You stop walking. It stops.
+You keep moving.
+
+[WALL ART]
+It is harD to even call this a piece at this point. The wall
+cArvings are spread across the corridor wall, each new one more
+and more distorted. It seems liKe someone was trying to wRite
+something, or illustrate Someone. It is unclear, as the tExt
+seems purposefully smudged. Something was here. Something that
+did not want to be remembered.
+
+[LOST SCHOLAR'S DIARY]
+Day X. I have been here for more than a week. This place is a
+lot bigger than I expected it to be. I don't even know how much
+deeper this cave goes. I am running out of supplies, my torches
+barely work at this point...
+I encountered something earlier. I thought I had found one of
+my fellow lost scholars, but this thing... God, it brought
+shivers all over my body. A being straight out of a nightmare.
+Its limbs were dislocated, it was rotting from the inside. And
+its eyes... full of hatred. Thankfully I was able to knock it
+out with my torch. God knows what would have happened to me if...
+TEXT_END
+
+FLOOR 5
+TITLE Run
+TYPE BOTH
+CIPHER RUN
+TEXT_START
+The air smells wrong here. Metallic, sweet in a way that turns
+your stomach. You raise your torch and the light lands on the
+wall, and for a moment you wish it hadn't.
+
+[WALL ART]
+It was not a carving this time. It was a Red substance, scattered
+all over the wall, as if trying to illUstrate some sort of being.
+There is a text written beside it. "RUN AW". The sentence was Not
+finished — instead, the last two letters were smudged across the
+wall, pointing towards the exit.
+
+[LOST SCHOLAR'S DIARY]
+...I do not know how long it has been... I lost track, and I feel
+like I am slowly losing my mind. These are not hallucinations,
+these are real monsters. They breathe, scream, cry for help. I
+cannot do this anymore... but who else, if not me? Something
+tells me that I am getting closer to the truth...
+...I wish I could unsee what I just saw. This painting... it's
+blood. It is straight up blood, God damn it. They were killed
+while trying to escape, smudged across the walls like insects.
+I will try going deeper as fast as I can. I feel very sick...
+TEXT_END
+
+FLOOR 6
+TITLE What Was Left Behind
+TYPE DIARY
+CIPHER MOURN
+TEXT_START
+There is no wall art on this floor. Whatever was here before,
+it is gone. The walls are bare stone. But wedged into a crack
+near the ground, you find a journal. The ink has run in places.
+The handwriting gets worse as the pages go on.
+
+[LOST SCHOLAR'S DIARY]
+...ha... REMEMBER how we met near that river 2 years AGO? Ah...
+YOU were so beautiful. I wish things went differently...
+...I always knew something was wrong with HER. How could she
+just... betray you?...
+....I just wish I could see you one last time, my dear. You
+always knew that I would end up dying somewhere DANGEROUS... you
+were right, I am too reckless for a scholar... maybe if I had
+trained to be a warrior, things would be... better?...
+...I see her, but I know she is not real... the air is poisoning
+me... I must keep going...
+TEXT_END
+
+FLOOR 7
+TITLE The Last Entry
+TYPE DIARY
+CIPHER FALL
+TEXT_START
+You almost miss it. A scrap of parchment, pinned to the wall
+with a fragment of bone. The writing is barely legible. Whoever
+held this pen was not steady when they wrote it.
+
+[LOST SCHOLAR'S DIARY]
+...run... IF you see this... run... please...
+...I am bleeding... God it hurts... I got 2 wounds on my
+stomach...
+...please... leave...
+
+..BASTET..
+.....kill her... KILL her... KILL... me...
+Run...
+Run...
+Run...
+TEXT_END
+
+FLOOR 8
+TITLE They Were One
+TYPE WALL_ART
+CIPHER SEEN
+TEXT_START
+You have stopped expecting to find beauty down here. And then
+this floor proves you wrong. One complete, careful painting.
+Someone took their time. You stand in front of it for longer
+than you planned.
+
+[WALL ART]
+Surprisingly, this piece IS complete. The Golden Hound and the
+Great CERBERUS, facing each other. They seem so different, yet
+they carry the same pain in their eyes. They WERE no different.
+They were one. ANCIENT text filled the gaps between the two
+beings.
+
+"A beast full of anger, full of rage and obsession over a single
+thought of revenge. You are feared, hated, fought against. You
+changed in their eyes — a beast remains in their heart. However...
+Despite everything. Despite the anger, despite the horrible
+physical form, despite the scars so deeply carved into your
+soul... it is still you. No evil in this world chooses to become
+one."
+TEXT_END
+
+FLOOR 9
+TITLE The Goddess
+TYPE WALL_ART
+CIPHER DECEIT
+TEXT_START
+The deeper you go, the colder it gets. Your breath mists in the
+torchlight. The stairs behind you feel very far away now. You
+round a corner and the wall opens up — the largest painting you
+have seen in this entire cave.
+
+[WALL ART]
+The painting shows a beautiful Goddess, embracing the DARK skies
+as her own. Her grace and power spreads EQUALLY all around the
+room. She is surrounded by her people — felines, seemingly
+CASTING ignorance into those who chose to follow her. Unlike the
+first wall art, where The Golden Hound was surrounded by all
+kinds of species, the Feline Goddess holds ENOUGH tolerance only
+for one kind. You recognise those hazel eyes and golden ornament.
+IT appeared in previous carvings. THINGS slowly start to make
+sense...
+TEXT_END
+
+FLOOR 10
+TITLE The Final Floor
+TYPE WALL_ART
+CIPHER NONE
+TEXT_START
+There is no entry text for this floor.
+The floor speaks for itself.
+TEXT_END
+
+ENDING_START
+The cave falls quiet after the final blow. Not the quiet of
+emptiness — the quiet of something finally finished.
+
+You stand over the place where Cerberus fell. The air is still.
+The dark force lifts slowly, like smoke thinning after a fire,
+and what remains on the ground is small. Trembling. A puppy,
+barely older than a few months, curled tight against itself,
+eyes squeezed shut.
+
+You sheathe your weapon.
+
+The puppy opens its eyes. Hazel. Wide. It looks at you the way
+something looks at you when it has forgotten what safety feels
+like.
+
+It opens its mouth. Its voice comes out broken, like it hasn't
+been used in a very long time.
+
+Kyon: "...where... where am I..."
+
+You crouch down. You keep your hands visible.
+
+Warrior: "You're safe. It's over."
+
+Kyon: "I couldn't... I couldn't stop it... she kept talking and
+I couldn't make it stop... everything was so loud..."
+
+Warrior: "I know. I read the walls. All of them."
+
+A long silence. The puppy looks at its own paws, as if seeing
+them for the first time.
+
+Kyon: "Did I... did I hurt people...?"
+
+You don't answer immediately. You owe him the truth.
+
+Warrior: "Yes. But that wasn't you. That was what she turned
+you into."
+
+Kyon: "...is there a difference?"
+
+Warrior: "There will be. When they know the truth, there will be."
+
+You reach out slowly. The puppy flinches, then doesn't. You
+place your hand on its head, gently.
+
+Kyon: "...I had a name. Before all this. I think I had a name."
+
+Warrior: "Kyon Khryseos. The Golden Hound. I know."
+
+He closes his eyes again. But this time it isn't fear.
+
+Kyon: "...will you stay? Just for a moment."
+
+Warrior: "As long as you need."
+
+---
+
+The nation rose when the warrior emerged from the cave — not with
+a trophy, but with the truth. The story spread faster than Bastet
+could contain it. Felines and canines, long divided, listened.
+Some wept. Some raged. Most simply went quiet.
+
+Bastet stood before the crowd that gathered at her gates. She did
+not run. She faced them with the same composure she had always
+carried — unbothered, unreadable. She looked at the canines whose
+homes she had stripped away, whose lives she had unravelled for
+the sake of a power she had wanted since the day she was exiled.
+
+She spoke only once.
+
+Bastet: "Was it I who betrayed you — or was it the people who
+once swore to protect you?"
+
+No one answered. The question hung in the air long after she
+was gone.
+
+---
+
+With every prayer, every act of kindness, every moment two
+species chose to understand each other rather than fear each
+other — Kyon grew stronger. Slowly. Imperfectly.
+
+The wounds were not forgotten. Not all canines accepted the
+apology. Not all felines offered one.
+
+But the cave was empty now, and the walls held the whole story
+for anyone willing to descend and read them.
+
+What does the future hold for this nation?
+
+Perhaps that depends on who keeps walking forward.
+
+ENDING_END
