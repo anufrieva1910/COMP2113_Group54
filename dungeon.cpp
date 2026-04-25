@@ -130,6 +130,15 @@ bool isValidMove(const Floor* floor, int x, int y) {
 void markVisited(Floor* floor, int x, int y) {
     Room* r = getRoom(floor, x, y);
     if (r) r->visited = true;
+
+     // Reveal surrounding rooms so the map fills in as player explores
+    int dx[] = { 0, 0, 1, -1, 1, 1, -1, -1 };
+    int dy[] = { 1, -1, 0, 0, 1, -1, 1, -1 };
+    for (int d = 0; d < 8; d++) {
+        Room* neighbour = getRoom(floor, x + dx[d], y + dy[d]);
+        if (neighbour && !neighbour->visited)
+            neighbour->visited = true;
+    }
 }
 
 // Returns the character symbol for a room on the map
