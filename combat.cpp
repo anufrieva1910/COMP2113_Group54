@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "combat.h"
 #include "items.h"
+#include "player.h"
 using namespace std;
 
 int calculateDamage(int attack, int defense) {
@@ -29,24 +30,6 @@ void randomize_start(string &turn) {
     turn= (rand()%2) ? "player" : "enemy";
 }
 
-void removeItem(Player &player, int itemNo) {
-    delete player.inventory[itemNo-1];
-    for (int i=itemNo-1; i<player.inventorySize-1; i++) {
-        player.inventory[i]=player.inventory[i+1];
-    }
-    player.inventory[player.inventorySize-1]=nullptr;
-    player.inventorySize--;
-}
-
-void addItem(Player &player, Item item) {  
-     if (player.inventorySize >= MAX_INVENTORY) {  
-        cout << "Inventory full, item dropped." << endl;
-        return;
-    }
-    Item *itemptr=new Item(item);
-    player.inventory[player.inventorySize]=itemptr;
-    player.inventorySize++;
-}
 
 void useItem(Player &player) {
     //pops up inventory menu
@@ -76,7 +59,7 @@ void useItem(Player &player) {
             default:
                 cout << "unknown item type" << endl;
         }
-        removeItem(player, itemNo);
+        removeItem(player, itemNo - 1);
     }
     else {
         cout << "item not found" << endl;
@@ -86,7 +69,8 @@ void useItem(Player &player) {
 void random_lootdrop(Player &player, Enemy enemy) {
     int index=rand() % NUM_ITEMS;
     const Item &loot = ITEMS_LIST[index];
-    addItem(player,loot);
+    Item *itemPtr = new Item(loot);
+    addItem(player, itemPtr);
     cout << "You found " << loot.name << " from " << enemy.name << endl;
 }
 

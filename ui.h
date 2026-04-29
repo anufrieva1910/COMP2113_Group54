@@ -6,7 +6,7 @@
 
 // typewriter effect. prints text one character at a time
 // delayMs controls speed (15 = fast, 25 = atmospheric)
-void typewrite(const string &text, int delayMs = 15);
+void typewrite(const std::string &text, int delayMs = 15);
 
 // title screen : Bastet and Golden Hound on either side, game name in middle
 char showTitleScreen();
@@ -15,7 +15,7 @@ char showTitleScreen();
 Difficulty showDifficultySelect();
 
 // name entry 
-string showNameEntry();
+std::string showNameEntry();
 
 // HUD 
 void showHUD(const Player &player);
@@ -27,10 +27,10 @@ void showFloorEntry(int floorNum, const LoreFragment &fragment);
 void showMap(const Floor &floor);
 
 // combat screen 
-void showCombatScreen(const Player &player, const Enemy &enemy, const string &enemyArt);
+void showCombatScreen(const Player &player, const Enemy &enemy, const std::string &enemyArt);
 
 // combat log 
-void addCombatLog(const string &line);
+void addCombatLog(const std::string &line);
 void showCombatLog();
 
 // lore screen 
@@ -53,6 +53,6 @@ void showLeaderboard();
 void clearScreen();
 
 // ASCII art strings for each enemy 
-string getEnemyArt(const string &enemyName);
+std::string getEnemyArt(const std::string &enemyName);
 
 #endif
