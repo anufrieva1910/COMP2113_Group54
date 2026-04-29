@@ -7,20 +7,27 @@
 
 
 
+//calculate the damage taken by the defensive side for each turn
 int calculateDamage(int attack, int defense);
 
 void turn_change(std::string &turn);
 
+//changes the turn after one move from either player or enemy
+void turn_change(std::string &turn);
+
+//randomizes the starting side of the combat
 void randomize_start(std::string &turn);
 
-void removeItem(Player &player, int itemNo);
-
-void addItem(Player &player, Item item);
-
+//uses an item in the inventory chosen by player during combat
 void useItem(Player &player);
 
+//combat logic when player encounters the final boss
+void boss_combat(Player &player, Enemy &boss);
+
+//combat logic when player encounters an enemy
 void encounter_combat(Player &player, Enemy &enemy);
 
+//randomly roll an item to drop after player defeats enemy
 void random_lootdrop(Player &player, Enemy enemy);
 
 void boss_combat(Player &player, Enemy &enemy);
