@@ -3,7 +3,6 @@
 
 #include "types.h"
 #include <string>
-using namespace std;
 
 // typewriter effect. prints text one character at a time
 // delayMs controls speed (15 = fast, 25 = atmospheric)
