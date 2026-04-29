@@ -1,16 +1,18 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include <string>
+#include "types.h"
 
+// returns the enemy for a given floor
+Enemy getEnemyForFloor(int floor);
 
-struct enemy{
-  std::string name;
-  int hp;
-  int attack;
-  int defense;
-  bool isboss;
-  int phase;
-};
+// dynamically spawns enemies for a floor, count is set by reference
+Enemy* spawnEnemies(int floor, Difficulty difficulty, int& count);
 
-#endif 
+// frees enemy array
+void cleanupEnemies(Enemy* enemies);
+
+// updates Cerberus phase based on hp thresholds
+void updateCerberusPhase(Enemy& cerberus);
+
+#endif
