@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "fileio.h"
+#include "dungeon.h"
 #include <iostream>
 #include <unistd.h>
 using namespace std;
@@ -229,10 +231,7 @@ void showFloorEntry(int floorNum, const LoreFragment &fragment) {
 }
 
 void showMap(const Floor &floor) {
-    // placeholder until Tarishi's renderer is integrated
-    cout << endl;
-    cout << "  [ map goes here ]" << endl;
-    cout << endl;
+    renderMap(&floor, floor.playerX, floor.playerY);
     (void)floor; // suppress unused warning
 }
 
@@ -411,13 +410,7 @@ void showVictory(const Player &player) {
 
 void showLeaderboard() {
     clearScreen();
-    cout << "=================================================================" << endl;
-    cout << "  LEADERBOARD" << endl;
-    cout << "-----------------------------------------------------------------" << endl;
-    cout << endl;
-    cout << "  [ leaderboard loaded by fileio -- placeholder ]" << endl;
-    cout << endl;
-    cout << "=================================================================" << endl;
-    cout << "  Press Enter to return...";
+    printLeaderboard();
+    cout << " Press Enter to return to title screen...";
     cin.ignore(10000, '\n');
 }
