@@ -113,7 +113,7 @@ void boss_combat(Player &player, Enemy &boss) {
                     break;
                 }
             }
-            if (!phase_two && boss.hp<=boss.maxHp*2/3 && boss.hp>boss.maxHp/3) {
+            if (!phase_two && boss.hp<=boss.maxHp*2/3) {
                 //boss phase 2 ui
                 boss.phase=2;
                 boss.attack=25;
