@@ -35,36 +35,31 @@ void randomize_start(string &turn) {
 
 void useItem(Player &player) {
     //pops up inventory menu
-    int itemNo;
-    cin >> itemNo;
-    if (itemNo>0 && itemNo<=player.inventorySize) {
-        Item * used_item;
-        used_item=player.inventory[itemNo-1];
+    int result = showInventory(player);
+    if (result >= 0 && result < player.inventorySize) {
+        Item* used_item = player.inventory[result];
         switch (used_item->type) {
-            case WEAPON:
-                player.attack+=used_item->value;
-                cout << player.name << " gained " << used_item->value << " attack from item " << used_item->name << endl;
+            case WEAPON: 
+                player.attack += used_item->value; 
+                cout << GREEN << player.name << " equipped " << used_item->name << " (+" << used_item->value << " ATK)" << RESET << endl;
                 break;
-            case SHIELD:
-                player.defense+=used_item->value;
-                cout << player.name << " gained " << used_item->value << " defense from item " << used_item->name << endl;
+            case SHIELD: 
+                player.defense += used_item->value; 
+                cout << GREEN << player.name << " equipped " << used_item->name << " (+" << used_item->value << " DEF)" << RESET << endl;
                 break;
             case POTION:
-                player.hp+=used_item->value;
-                if (player.hp>player.maxHp) player.hp=player.maxHp;
-                cout << player.name << " gained " << used_item->value << " hp from item " << used_item->name << endl;
+                player.hp += used_item->value;
+                if (player.hp > player.maxHp) player.hp = player.maxHp;
+                cout << GREEN << player.name << " used " << used_item->name << " (+" << used_item->value << " HP)" << RESET << endl;
                 break;
             case LOOT:
-                player.gold+=used_item->value;
-                cout << player.name << " gained " << used_item->value << " gold from item " << used_item->name << endl;
+                player.gold += used_item->value;
+                cout << GREEN << player.name << " sold " << used_item->name << " (+" << used_item->value << " Gold)" << RESET << endl;
                 break;
             default:
-                cout << "unknown item type" << endl;
+                cout << "Unknown item." << endl;
         }
-        removeItem(player, itemNo - 1);
-    }
-    else {
-        cout << "item not found" << endl;
+        removeItem(player, result);
     }
 }
 

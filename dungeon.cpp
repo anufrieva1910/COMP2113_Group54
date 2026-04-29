@@ -44,23 +44,71 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     }
 
     // Assign random types to interior cells
-    for (int x = 1; x < FLOOR_WIDTH - 1; x++)
-        for (int y = 1; y < FLOOR_HEIGHT - 1; y++)
-            floor->grid[x][y].type = randomRoomType(floorNumber, difficulty);
+    for (int rx = 1; rx < FLOOR_WIDTH - 1; rx += 2) {
+        for (int ry = 1; ry < FLOOR_HEIGHT - 1; ry+=2) {
+            floor->grid[rx][ry].type = EMPTY;
+            
+            if (rx + 2 < FLOOR_WIDTH - 1) {
+                floor->grid[rx + 1][ry].type = EMPTY;
+            }
+
+            if (ry + 2 < FLOOR_HEIGHT - 1) {
+                floor->grid[rx][ry + 1].type = EMPTY;
+            }
+        }
+    }
+
 
     // Place exit at bottom-right
     floor->grid[FLOOR_WIDTH - 2][FLOOR_HEIGHT - 2].type = EXIT;
 
-    // Guarantee at least one lore room per floor
-    bool lorePlaced = false;
-    for (int x = 1; x < FLOOR_WIDTH - 1 && !lorePlaced; x++)
-        for (int y = 1; y < FLOOR_HEIGHT - 1 && !lorePlaced; y++)
-            if (floor->grid[x][y].type == LORE) lorePlaced = true;
+    //place special rooms - track counts
+    int enemies = 0;
+    int lore = 0;
+    int puzzles = 0;
+    int treasure = 0;
 
-    if (!lorePlaced) {
-        int lx = 1 + rand() % (FLOOR_WIDTH - 2);
-        int ly = 1 + rand() % (FLOOR_HEIGHT - 2);
-        floor->grid[lx][ly].type = LORE;
+    int maxEnemies = 2 + floorNumber;
+    int maxLore = 1;
+    int maxPuzzles = 2;
+    int maxTreasure = 2;
+
+
+    for (int rx = 1; rx < FLOOR_WIDTH - 1; rx+=2) {
+        for (int ry = 1; ry < FLOOR_HEIGHT - 1; ry+=2) {
+            if (rx == 1 && ry == 1) continue; // skip player start
+            if (rx == FLOOR_WIDTH - 2 && ry == FLOOR_HEIGHT - 2) continue; // skip exit
+
+            int roll = rand() % 10;
+            if (roll < 4 && enemies < maxEnemies) {
+                floor->grid[rx][ry].type = MONSTER;
+                enemies++;
+            } else if (roll == 7 && lore < maxLore) {
+                floor->grid[rx][ry].type = LORE;
+                lore++;
+            } else if (roll == 9 && puzzles < maxPuzzles) {
+                floor->grid[rx][ry].type = PUZZLE;
+                puzzles++;
+            } else if (roll == 6 && treasure < maxTreasure) {
+                floor->grid[rx][ry].type = TREASURE;
+                treasure++;
+            } else {
+                floor->grid[rx][ry].type = randomRoomType(floorNumber, difficulty);
+            }
+        }
+    }
+
+    if (lore == 0) {
+        bool placed = false;
+        while (!placed) {
+            int rx = 1 + (rand() % (FLOOR_WIDTH - 2)/2)*2;
+            int ry = 1 + rand() % (FLOOR_HEIGHT - 2);
+            if (rx == 1 && ry == 1) continue; // skip player start
+            if (rx == FLOOR_WIDTH - 2 && ry == FLOOR_HEIGHT - 2) continue; // skip exit
+            floor->grid[rx][ry].type = LORE;
+            placed = true;
+            
+        }
     }
 
     // Set player start and reveal surrounding rooms

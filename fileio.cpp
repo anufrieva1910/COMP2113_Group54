@@ -243,10 +243,9 @@ LoreFragment* loadLoreFragments(int& count) {
     std::string line;
     int total = 0;
     while (std::getline(in, line))
-        if (line.substr(0, 3) == "ID=") ++total;
+        if (line.substr(0, 5) == "FLOOR") ++total;
 
     if (total == 0) {
-        std::cerr << "[fileio] WARNING: No lore fragments found in lore.txt.\n";
         return nullptr;
     }
 
@@ -257,25 +256,31 @@ LoreFragment* loadLoreFragments(int& count) {
     in.clear();
     in.seekg(0);
     int idx = -1;
+    bool inText = false;
 
     while (std::getline(in, line)) {
-        if (line.empty()) continue;
-        size_t eq = line.find('=');
-        if (eq == std::string::npos) continue;
-        std::string key   = line.substr(0, eq);
-        std::string value = line.substr(eq + 1);
-
-        if (key == "ID") {
+        if (!inText &&line.empty() || line[0] == '#') continue;
+        if (!inText && line.substr(0, 5) == "FLOOR") {
             ++idx;
-            frags[idx].floorNumber = std::stoi(value);
+            frags[idx].floorNumber = std::stoi(line.substr(6));
             frags[idx].title = "";
             frags[idx].text  = "";
-        } else if (idx >= 0) {
-            if      (key == "FLOOR") frags[idx].floorNumber = std::stoi(value);
-            else if (key == "TITLE") frags[idx].title = value;
-            else if (key == "TEXT")  frags[idx].text  = value;
+        } else if (!inText && line.substr(0, 4) == "TYPE") {
+            // ignore 
+        } else if (!inText && line.substr(0, 6) == "CIPHER") {
+            // ignore 
+        } else if (!inText && line.substr(0, 5) == "TITLE") {
+            frags[idx].title = line.substr(6);
+        } else if (line == "TEXT_START") {
+            inText = true;
+        } else if (line == "TEXT_END") {
+            inText = false;
+        } else if (inText) {
+            if (line.substr(0, 10) == "TYPE " || line.substr(0, 7) == "CIPHER ") continue;
+            if (!frags[idx].text.empty()) frags[idx].text += "\n";
+            frags[idx].text += line;
         }
-    }
+    }   
 
     in.close();
     count = total;

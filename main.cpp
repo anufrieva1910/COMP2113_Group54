@@ -108,7 +108,7 @@ int main() {
                             default: break;
                         }
                         removeItem(player, result);
-                    } else if (result <= 2) {
+                    } else if (result <= -2) {
                         removeItem(player, -(result + 2)); // drop item
                     }
                     continue;

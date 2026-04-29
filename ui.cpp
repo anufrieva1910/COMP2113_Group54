@@ -188,6 +188,7 @@ void showHUD(const Player &player) {
     cout << "=================================================================" << endl;
     cout << "  Floor: " << player.floor
          << "  |  HP: " << player.hp << "/" << player.maxHp
+         << "  |  ATK: " << player.attack
          << "  |  DEF: " << player.defense
          << "  |  Gold: " << player.gold << endl;
 
