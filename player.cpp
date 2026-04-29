@@ -11,6 +11,8 @@ void initPlayer(Player &player, string name, Difficulty difficulty) {
     player.inventorySize = 0;
     player.attack = 10;
     player.defense = 5;
+    player.score = 0;
+    player.loreCount = 0;
 
     //inventory reset
     for (int i = 0; i < MAX_INVENTORY; i++) {

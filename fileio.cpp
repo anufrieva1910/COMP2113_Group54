@@ -51,7 +51,7 @@ bool saveGame(const Player& player, const std::string& difficulty) {
 
     // ── Lore fragments found ──
     out << "loreCount=" << player.loreCount << "\n";
-    for (int i = 0; i < TOTAL_LORE_FRAGMENTS; ++i) {
+    for (int i = 0; i < TOTAL_FLOORS; ++i) {
         out << "lore" << i << "=" << (player.loreFound[i] ? 1 : 0) << "\n";
     }
 
@@ -74,7 +74,7 @@ bool loadGame(Player& player, std::string& difficulty) {
 
     // Temporary inventory storage before heap allocation
     std::vector<Item> tempInventory;
-    bool tempLore[TOTAL_LORE_FRAGMENTS] = {};
+    bool tempLore[TOTAL_FLOORS] = {};
 
     while (std::getline(in, line)) {
         if (line.empty()) continue;
@@ -108,21 +108,19 @@ bool loadGame(Player& player, std::string& difficulty) {
         else if (key.substr(0, 4) == "lore" && key != "loreCount") {
             // "loreN" where N is 0–9
             int idx = std::stoi(key.substr(4));
-            if (idx >= 0 && idx < TOTAL_LORE_FRAGMENTS)
+            if (idx >= 0 && idx < TOTAL_FLOORS)
                 tempLore[idx] = (std::stoi(value) == 1);
         }
     }
     in.close();
 
     // ── Allocate heap arrays ──
-    player.inventoryCapacity = MAX_INVENTORY;
     player.inventorySize     = static_cast<int>(tempInventory.size());
-    player.inventory         = new Item[player.inventoryCapacity];
-    for (int i = 0; i < player.inventorySize; ++i)
-        player.inventory[i] = tempInventory[i];
+    for (int i = 0; i < player.inventorySize; ++i) {
+        player.inventory[i] = new Item(tempInventory[i]);
+    }
 
-    player.loreFound = new bool[TOTAL_LORE_FRAGMENTS];
-    for (int i = 0; i < TOTAL_LORE_FRAGMENTS; ++i)
+    for (int i = 0; i < TOTAL_FLOORS; ++i)
         player.loreFound[i] = tempLore[i];
 
     return true;
