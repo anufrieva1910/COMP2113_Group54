@@ -1,7 +1,7 @@
 #ifndef FILEIO_H
 #define FILEIO_H
 
-#include "structs.h"
+#include "types.h"
 #include <string>
 #include <vector>
 
