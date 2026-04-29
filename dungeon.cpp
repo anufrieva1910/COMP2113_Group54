@@ -1,6 +1,7 @@
 #include "dungeon.h"
 #include <iostream>
 #include <cstdlib>
+#include "ui.h"
 
 // Returns a random room type based on floor depth and difficulty
 static RoomType randomRoomType(int floorNumber, Difficulty difficulty) {
@@ -142,18 +143,18 @@ void markVisited(Floor* floor, int x, int y) {
 }
 
 // Returns the character symbol for a room on the map
-static char roomSymbol(const Room& room, bool isPlayer) {
-    if (isPlayer)                        return '@';
-    if (!room.visited && !room.revealed) return '#';
+static std::string roomSymbol(const Room& room, bool isPlayer) {
+    if (isPlayer)                        return YELLOW + std::string("@") + RESET;
+    if (!room.visited && !room.revealed) return "#";
     switch (room.type) {
-        case MONSTER:  return 'E';
-        case TREASURE: return 'T';
-        case TRAP:     return '^';
-        case LORE:     return 'L';
-        case EXIT:     return '>';
-        case PUZZLE:   return 'P';
-        case HIDDEN:   return room.revealed ? '?' : '#';
-        default:       return '.';
+        case MONSTER:  return RED + std::string("E") + RESET;
+        case TREASURE: return GREEN + std::string("T") + RESET;
+        case TRAP:     return DARK_GREY + std::string("^") + RESET;
+        case LORE:     return CYAN + std::string("L") + RESET;
+        case EXIT:     return BOLD + std::string(">") + RESET;
+        case PUZZLE:   return MAGENTA + std::string("P") + RESET;
+        case HIDDEN:   return room.revealed ? DARK_GREY + std::string("?") + RESET : "#";
+        default:       return ".";
     }
 }
 

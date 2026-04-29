@@ -4,6 +4,15 @@
 #include "types.h"
 #include <string>
 
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define CYAN    "\033[36m"
+#define MAGENTA "\033[35m"
+#define BOLD    "\033[1m"
+#define DARK_GREY "\033[90m"
+#define RESET   "\033[0m"
+
 // typewriter effect. prints text one character at a time
 // delayMs controls speed (15 = fast, 25 = atmospheric)
 void typewrite(const std::string &text, int delayMs = 15);
