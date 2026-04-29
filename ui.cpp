@@ -251,6 +251,7 @@ void showCombatScreen(const Player &player, const Enemy &enemy, const string &en
     cout << endl;
     cout << "-----------------------------------------------------------------" << endl;
     cout << "  [YOU]   HP: " << player.hp << "/" << player.maxHp
+         << "   ATK: " << player.attack
          << "   DEF: " << player.defense << endl;
     cout << "  [" << enemy.name << "]   HP: " << enemy.hp << "/" << enemy.maxHp << endl;
     cout << "-----------------------------------------------------------------" << endl;

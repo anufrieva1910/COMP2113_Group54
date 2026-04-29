@@ -4,6 +4,8 @@
 #include "combat.h"
 #include "items.h"
 #include "player.h"
+#include "enemy.h"
+#include "ui.h"
 using namespace std;
 
 int calculateDamage(int attack, int defense) {
@@ -79,23 +81,24 @@ void boss_combat(Player &player, Enemy &boss) {
     bool phase_two=false, phase_three=false;
     while(player.hp>0 and boss.hp>0) {
         if (turn=="player") {
-            int move;
+            showCombatScreen(player, boss, getEnemyArt(boss.name));
+            char move;
             cin >> move;
+            cin.ignore(10000, '\n');
             switch (move) {
-                case 1: {
+                case 'A':
+                case 'a': {
                     int damage=calculateDamage(player.attack,boss.defense);
                     boss.hp-=damage;
                     //attack boss ui
                     break;
                 }
-                case 2: {
+                case 'I':
+                case 'i': {
                     useItem(player);
                     break;
                 }
-                default: {
-                    cout << "Invalid input" << endl;
-                    break;
-                }
+                
             }
             if (!phase_two && boss.hp<=boss.maxHp*2/3) {
                 //boss phase 2 ui
@@ -136,20 +139,25 @@ void encounter_combat(Player &player, Enemy &enemy) {
     randomize_start(turn);
     while(player.hp>0 and enemy.hp>0) {
         if (turn=="player") {
-            int move;
+            showCombatScreen(player, enemy, getEnemyArt(enemy.name));
+            char move;
             cin >> move;
+            cin.ignore(10000, '\n');
             switch (move) {
-                case 1: {
+                case 'A':
+                case 'a': {
                     int damage=calculateDamage(player.attack,enemy.defense);
                     enemy.hp-=damage;
                     //attack ui
                     break;
                 }
-                case 2: {
+                case 'I':
+                case 'i': {
                     useItem(player);
                     break;
                 }
-                case 3: {
+                case 'R':
+                case 'r': {
                     int random_flee=rand()%2;
                     if (random_flee) {
                         flee=true;
