@@ -135,7 +135,7 @@ void markVisited(Floor* floor, int x, int y) {
      // Reveal surrounding rooms so the map fills in as player explores
     int dx[] = { 0, 0, 1, -1, 1, 1, -1, -1, 2, -2, 0, 0 };
     int dy[] = { 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 2, -2 };
-    for (int d = 0; d < 8; d++) {
+    for (int d = 0; d < 12; d++) {
         Room* neighbour = getRoom(floor, x + dx[d], y + dy[d]);
         if (neighbour && !neighbour->visited)
             neighbour->visited = true;

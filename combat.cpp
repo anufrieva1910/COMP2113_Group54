@@ -107,7 +107,7 @@ void boss_combat(Player &player, Enemy &boss) {
                 boss.defense=15;
                 phase_two=true;
             }
-            else if(!phase_three && boss.hp<=boss.maxHp/3) {
+            if(!phase_three && boss.hp<=boss.maxHp/3) {
                 //boss phase 3 ui
                 boss.phase=3;
                 boss.attack=30;

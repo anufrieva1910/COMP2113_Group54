@@ -25,11 +25,11 @@ void typewrite(const string &text, int delayMs) {
 string getEnemyArt(const string &enemyName) {
     if (enemyName == "Bat Swarm") return
         "    _   ,_,   _\n"
-        "   / `'=) (='` \\n"
+        "   / `'=) (='` \\\n"
         "  /.-.-.\\  /.-.-.\\\n"
         "  `      \"      `";
 
-    if (enemyName == "Cave Rat") return
+    if (enemyName == "Cave Rats") return
         "             (\\_/)\n"
         "    .-\"\"-.-.'`   \\\n"
         "   /   \\      _.--'\n"
@@ -45,7 +45,7 @@ string getEnemyArt(const string &enemyName) {
         "   /\\  |  /\\\n"
         "   | `.:.' |";
 
-    if (enemyName == "Stray Dog") return
+    if (enemyName == "Stray Dogs") return
         "                __\n"
         "               /\\/''-,\n"
         "       ,--'''''   /\"\n"
@@ -193,7 +193,7 @@ void showHUD(const Player &player) {
 
     // lore scroll tracker
     cout << "  Lore: ";
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 0; i <= 9; i++) {
         if (player.loreFound[i])
             cout << "[" << i << ":FOUND] ";
         else
@@ -293,6 +293,10 @@ void showLoreScreen(const LoreFragment &fragment, bool cipherAvailable) {
         cout << "  [ X ] Leave" << endl;
     cout << "=================================================================" << endl;
     cout << "  > ";
+
+    char loreInput;
+    cin >> loreInput;
+    cin.ignore(10000, '\n');
 }
 
 int showInventory(const Player &player) {
@@ -344,7 +348,7 @@ void showGameOver(const Player &player) {
     cout << "  Gold collected:   " << player.gold << endl;
 
     int loreCount = 0;
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 0; i <= 9; i++) {
         if (player.loreFound[i]) loreCount++;
     }
     cout << "  Lore discovered:  " << loreCount << " / 9" << endl;

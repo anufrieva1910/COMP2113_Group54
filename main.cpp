@@ -95,10 +95,21 @@ int main() {
                 // inventory
                 if (input == 'i') {
                     int result = showInventory(player);
-                    if (result >= 0) {
-                        useItem(player);
-                    } else if (result <= -2) {
-                        removeItem(player, -(result + 2));
+                    if (result >= 0 && result < player.inventorySize) {
+                        Item* used_item = player.inventory[result];
+                        switch (used_item->type) {
+                            case WEAPON: player.attack += used_item->value; break;
+                            case SHIELD: player.defense += used_item->value; break;
+                            case POTION:
+                                player.hp += used_item->value;
+                                if (player.hp > player.maxHp) player.hp = player.maxHp;
+                                break;
+                            case LOOT: player.gold += used_item->value; break;
+                            default: break;
+                        }
+                        removeItem(player, result);
+                    } else if (result <= 2) {
+                        removeItem(player, -(result + 2)); // drop item
                     }
                     continue;
                 }
@@ -151,6 +162,8 @@ int main() {
                         Item* loot = new Item(ITEMS_LIST[idx]);
                         addItem(player, loot);
                         player.gold += 30;
+                        cout << " Press Enter to open the treasure chest...";
+                        cin.ignore(10000, '\n');
                         cout << GREEN << "  You found " << loot->name
                              << " and 30 gold!" << RESET << endl;
                         cin.ignore(10000, '\n');
@@ -160,6 +173,8 @@ int main() {
 
                     case TRAP: {
                         takeDamage(player, 20);
+                        cout << " Something feels wrong..." << endl;
+                        cin.ignore(10000, '\n');
                         cout << RED << "  A trap! You take 20 damage." << RESET << endl;
                         cin.ignore(10000, '\n');
                         if (isDead(player)) gameOver = true;
