@@ -55,6 +55,8 @@ struct Player {
     int defense;
     int gold;
     int floor; //current floor number
+    int score;
+    int loreCount; //number of lore fragments found
     Difficulty difficulty;
     Item* inventory[MAX_INVENTORY];
     int inventorySize;
@@ -82,6 +84,8 @@ struct SaveData {
     int gold;
     int floor;
     Difficulty difficulty;
+    int score;
+    int loreCount;
 };
 
 #endif
