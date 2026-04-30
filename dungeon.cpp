@@ -3,49 +3,41 @@
 #include <cstdlib>
 #include "ui.h"
 
-// Checks if there is a reachable path to the exit
+// Checks if there is a reachable path to the target cell
 // Returns true if there is at least one path
-bool isReachable(int floorNumber, Floor* floor) {
+bool isCellReachable(Floor* floor, int targetX, int targetY) {
     if (!floor) {
         return false;
     }
 
-    // Set the starting point of the character to (1,1)
+    // Set the starting cell of the character to (1,1)
     const int startX = 1;
     const int startY = 1;
-    int exitX ,exitY;
-
-    // Set the coordinates of the exit to (10,6) if it is floor 10
-    if (floorNumber == TOTAL_FLOORS) {
-        exitX = FLOOR_WIDTH / 2;
-        exitY = FLOOR_HEIGHT / 2;
-    }
-    // Set the coordinates of the exit to (18,10) if it is not floor 10
-    else {
-        exitX = FLOOR_WIDTH - 2;
-        exitY = FLOOR_HEIGHT - 2;
-    }
 
     int dx[] = {0, 0, 1, -1};
     int dy[] = {1, -1, 0, 0};
-    bool visited[FLOOR_WIDTH][FLOOR_HEIGHT] = {false};
-    int start = 0;
-    int move = 0;
 
-    // Stores the reachable coordinates in two array
+    // Mark cells that have been recorded to be reachable
+    bool visited[FLOOR_WIDTH][FLOOR_HEIGHT] = {false};
+
+    int start = 0;
+    int end = 0;
+
+    // Stores the reachable cells in array
     int trialX[FLOOR_HEIGHT*FLOOR_WIDTH];
     int trialY[FLOOR_HEIGHT*FLOOR_WIDTH];
-    trialX[move] = startX;
-    trialY[move] = startY;
-    move++;
+
+    trialX[end] = startX;
+    trialY[end] = startY;
+    end++;
     
-    while (start<move) {
+    while (start<end) {
         int x = trialX[start];
         int y = trialY[start];
         start++;
 
         // If the exit is reachable, return true
-        if (x==exitX && y==exitY) {
+        if (x==targetX && y==targetY) {
             return true;
         }
         
@@ -60,16 +52,14 @@ bool isReachable(int floorNumber, Floor* floor) {
             }
             if (!visited[nx][ny] && floor->grid[nx][ny].type != HIDDEN) {
                 visited[nx][ny] = true;
-                trialX[move] = nx;
-                trialY[move] = ny;
-                move++;
+                trialX[end] = nx;
+                trialY[end] = ny;
+                end++;
             }
         }
     }
     return false;
 } 
-
-
 
 // Allocates and returns a new floor with randomised rooms
 // Caller must free with freeFloor()
@@ -108,7 +98,12 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
                 }
             }
         }
-        pathExists = isReachable(floorNumber, floor);
+        if (floorNumber == TOTAL_FLOORS) {
+            pathExists = isCellReachable(floor, FLOOR_WIDTH / 2, FLOOR_HEIGHT / 2);
+        }
+        else {
+            pathExists = isCellReachable(floor, FLOOR_WIDTH - 2, FLOOR_HEIGHT - 2);
+        }
     }
 
     // floor 10 — boss room
@@ -123,12 +118,12 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
         return floor;
     }
 
-    // collect all valid interior non-wall positions
+    // collect all valid interior non-wall and reachable positions
     int candX[200], candY[200];
     int candCount = 0;
     for (int x = 2; x < FLOOR_WIDTH - 2; x++) {
         for (int y = 2; y < FLOOR_HEIGHT - 2; y++) {
-            if (floor->grid[x][y].type == EMPTY)  {
+            if (floor->grid[x][y].type == EMPTY && isCellReachable(floor, x, y))  {
                 candX[candCount] = x;
                 candY[candCount] = y;
                 candCount++;

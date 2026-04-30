@@ -11,6 +11,10 @@ const int FLOOR_HEIGHT = 12;
 // Returns true if there is at least one path
 bool isReachable(int floorNumber, Floor *floor);
 
+// Checks if there is a reachable path to the target cell
+// Returns true if there is at least one path
+bool isCellReachable(Floor* floor, int targetX, int targetY);
+
 // Allocates and returns a new floor with randomised rooms
 // Caller must free with freeFloor()
 Floor* generateFloor(int floorNumber, Difficulty difficulty);
