@@ -10,8 +10,6 @@
 //calculate the damage taken by the defensive side for each turn
 int calculateDamage(int attack, int defense);
 
-void turn_change(std::string &turn);
-
 //changes the turn after one move from either player or enemy
 void turn_change(std::string &turn);
 
@@ -29,7 +27,5 @@ void encounter_combat(Player &player, Enemy &enemy);
 
 //randomly roll an item to drop after player defeats enemy
 void random_lootdrop(Player &player, Enemy enemy);
-
-void boss_combat(Player &player, Enemy &enemy);
 
 #endif

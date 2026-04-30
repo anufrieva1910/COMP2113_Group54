@@ -20,8 +20,6 @@ PuzzleResult runNumberRiddle(Difficulty difficulty, bool hard);
 PuzzleResult runSymbolMatch(Difficulty difficulty, bool hard);
 PuzzleResult runLeverSequence(Difficulty difficulty, bool hard);
 
-PuzzleResult runLockedDoor(); //checks if player has the key. incomplete
-
 int getRetries(Difficulty difficulty); //allowed retries based on difficulty
 int getSkipPenalty(Difficulty difficulty); //gold penalty for skipping
 

@@ -44,7 +44,8 @@ bool saveGame(const Player& player, const std::string& difficulty) {
     // ── Inventory ──
     out << "inventorySize=" << player.inventorySize << "\n";
     for (int i = 0; i < player.inventorySize; ++i) {
-        out << "item=" << player.inventory[i]->name
+        out << "item=" << player.inventory[i]->type
+            << ","     << player.inventory[i]->name
             << ","     << player.inventory[i]->value << "\n";
     }
 
@@ -95,10 +96,11 @@ bool loadGame(Player& player, std::string& difficulty) {
         else if (key == "score")          player.score     = std::stoi(value);
         else if (key == "loreCount")      player.loreCount = std::stoi(value);
         else if (key == "item") {
-            // "name,value,quantity"
+            // "type,name,value"
             std::istringstream ss(value);
             std::string part;
             Item it;
+            std::getline(ss, part, ','); it.type     = static_cast<ItemType>(std::stoi(part));
             std::getline(ss, part, ','); it.name     = part;
             std::getline(ss, part, ','); it.value    = std::stoi(part);
             tempInventory.push_back(it);
@@ -260,7 +262,7 @@ LoreFragment* loadLoreFragments(int& count) {
     bool inWallArt = false;
 
     while (std::getline(in, line)) {
-        if (!inText &&line.empty() || line[0] == '#') continue;
+        if ((!inText &&line.empty()) || line[0] == '#') continue;
         if (!inText && line.substr(0, 5) == "FLOOR") {
             ++idx;
             frags[idx].floorNumber = std::stoi(line.substr(6));

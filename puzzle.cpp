@@ -399,18 +399,6 @@ PuzzleResult runLeverSequence(Difficulty difficulty, bool hard) {
     return FAILED;
 }
 
-// locked door stub. check player inventory for key during integration
-PuzzleResult runLockedDoor() {
-    cout << endl;
-    printSeperator();
-    cout << "  | LOCKED DOOR                                      |" << endl;
-    printSeperator();
-    cout << endl;
-    cout << "  A heavy iron door blocks the passage." << endl;
-    cout << "  There is a keyhole. The key must be somewhere on this floor." << endl;
-    cout << endl;
-    return FAILED;
-}
 
 // lore cipher. player types the hidden word from the lore text
 // correct answer randomly unlocks the exit or opens a hidden passage
@@ -458,6 +446,7 @@ PuzzleResult runLoreCipher(int floorNum, Difficulty difficulty, bool &cipherOpen
 
     cout << endl;
     cout << "  What word do they spell?" << endl;
+    cout << "  (Type S to try later)" << endl;
     cout << endl;
 
     while (true) {
@@ -467,6 +456,11 @@ PuzzleResult runLoreCipher(int floorNum, Difficulty difficulty, bool &cipherOpen
         cin >> input;
         cin.ignore(10000, '\n');
         toUpper(input);
+
+        if (input == "S") {
+            cout << endl << "  You step back. The message fades from view." << endl << endl;
+            return FAILED;
+        }
 
 
         if (input == cipherAnswers[floorNum]) {

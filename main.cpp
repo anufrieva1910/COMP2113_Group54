@@ -162,8 +162,6 @@ int main() {
                         Item* loot = new Item(ITEMS_LIST[idx]);
                         addItem(player, loot);
                         player.gold += 30;
-                        cout << " Press Enter to open the treasure chest...";
-                        cin.ignore(10000, '\n');
                         cout << GREEN << "  You found " << loot->name
                              << " and 30 gold!" << RESET << endl;
                         cin.ignore(10000, '\n');
@@ -225,17 +223,15 @@ int main() {
                             }
                         } else {
                             bool cipherOpensExit = false;
-                            PuzzleResult cr = FAILED;
-                            while ( cr != SOLVED) {
-                                cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
-                            
-                                if (cr != SOLVED) {
-                                    cout << RED << " The exit remains sealed. Solve the cipher to open it." << RESET << endl;
-                                    cin.ignore(10000, '\n');
-                                }
+                            PuzzleResult cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
+                            if (cr == SOLVED) {
+                                player.floor++;
+                                floorDone = true;
+                            } else {
+                                cout << RED << "  The exit remains sealed." << RESET << endl;
+                                cin.ignore(10000, '\n');
                             }
-                            player.floor++;
-                            floorDone = true;
+        
                         }
                         break;
                     }
@@ -257,6 +253,14 @@ int main() {
             cin >> retry;
             cin.ignore(10000, '\n');
             // R retries, anything else goes back to title
+            if (toupper(retry) == 'R') {
+                for (int i = 0; i < player.inventorySize; i++) {
+                    delete player.inventory[i];
+                }
+                initPlayer(player, player.name, player.difficulty);
+                gameOver = false;
+                won = false;
+            }
         }
 
         // victory

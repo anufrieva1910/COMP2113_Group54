@@ -194,7 +194,7 @@ void showHUD(const Player &player) {
 
     // lore scroll tracker
     cout << "  Lore: ";
-    for (int i = 0; i <= 9; i++) {
+    for (int i = 0; i < TOTAL_FLOORS; i++) {
         if (player.loreFound[i])
             cout << "[" << i << ":FOUND] ";
         else
@@ -349,10 +349,10 @@ void showGameOver(const Player &player) {
     cout << "  Gold collected:   " << player.gold << endl;
 
     int loreCount = 0;
-    for (int i = 0; i <= 9; i++) {
+    for (int i = 0; i < TOTAL_FLOORS; i++) {
         if (player.loreFound[i]) loreCount++;
     }
-    cout << "  Lore discovered:  " << loreCount << " / 9" << endl;
+    cout << "  Lore discovered:  " << loreCount << " / " << TOTAL_FLOORS << endl;
     cout << endl;
     cout << "  [ R ] Retry        [ Q ] Quit" << endl;
     cout << endl;

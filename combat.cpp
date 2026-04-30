@@ -182,7 +182,7 @@ void encounter_combat(Player &player, Enemy &enemy) {
     if (player.hp<=0) {
         //game over
     }
-    else {
+    else if (!flee) {
         random_lootdrop(player, enemy);
         //enemy defeated ui
         //back to map ui

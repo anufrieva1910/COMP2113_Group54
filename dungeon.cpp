@@ -3,22 +3,6 @@
 #include <cstdlib>
 #include "ui.h"
 
-// Returns a random room type based on floor depth and difficulty
-static RoomType randomRoomType(int floorNumber, Difficulty difficulty) {
-    int roll = rand() % 100;
-    int monsterCap = 54 + floorNumber;
-    if (difficulty == HARD) monsterCap += 5;
-    if (difficulty == EASY) monsterCap -= 5;
-
-    if (roll < 40)               return EMPTY;
-    if (roll <= monsterCap)      return MONSTER;
-    if (roll <= monsterCap + 10) return TREASURE;
-    if (roll <= monsterCap + 20) return TRAP;
-    if (roll <= monsterCap + 25) return LORE;
-    if (roll <= monsterCap + 31) return HIDDEN;
-    if (roll <= monsterCap + 37) return PUZZLE;
-    return EMPTY;
-}
 
 // Allocates and returns a new floor with randomised rooms
 // Caller must free with freeFloor()
@@ -84,10 +68,10 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     int puzzles = 0;
     int treasure = 0;
 
-    int maxEnemies = 4;
+    int maxEnemies = (difficulty == EASY) ? 2: (difficulty == HARD) ? 6 : 4;
     int maxLore = 1;
-    int maxPuzzles = 3;
-    int maxTreasure = 2;
+    int maxPuzzles = (difficulty == HARD) ? 1 : 3;
+    int maxTreasure = (difficulty == EASY) ? 3 : (difficulty == HARD) ? 1 : 2;
 
 
     for (int gx = 0; gx < ROOMS_X; gx++) {

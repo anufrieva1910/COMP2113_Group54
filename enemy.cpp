@@ -28,37 +28,4 @@ Enemy getEnemyForFloor(int floor) {
     return {"Unknown", 10, 10, 1, 1, false, 1};
 }
 
-// Dynamic spawning
-Enemy* spawnEnemies(int floor, Difficulty difficulty, int& count) {
-    count = difficulty + (floor / 2);
-    Enemy* enemies = new Enemy[count];
-    for (int i = 0; i < count; i++) {
-        enemies[i] = getEnemyForFloor(floor);
-        // scale stats by difficulty
-        enemies[i].hp += difficulty * 10;
-        enemies[i].attack += difficulty * 2;
-        enemies[i].defense += difficulty;
-    }
-    return enemies;
-}
 
-// Cleanup
-void cleanupEnemies(Enemy* enemies) {
-    delete[] enemies;
-}
-
-// Cerberus phase transitions
-void updateCerberusPhase(Enemy& cerberus) {
-    if (cerberus.isBoss) {
-        if (cerberus.hp <= cerberus.maxHp * 0.66 && cerberus.phase == 1) {
-            cerberus.attack += 5;
-            cerberus.phase = 2;
-            cout << "Cerberus enters Phase 2!" << endl;
-        }
-        if (cerberus.hp <= cerberus.maxHp * 0.33 && cerberus.phase == 2) {
-            cerberus.attack += 5;
-            cerberus.phase = 3;
-            cout << "Cerberus enters Phase 3!" << endl;
-        }
-    }
-}
