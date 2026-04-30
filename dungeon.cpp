@@ -14,6 +14,7 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     floor->enemyCount  = 0;
     floor->enemies     = nullptr;
 
+    // default everything to walkable empty
     floor->grid = new Room*[FLOOR_WIDTH];
     for (int x = 0; x < FLOOR_WIDTH; x++) {
         floor->grid[x] = new Room[FLOOR_HEIGHT];
@@ -27,111 +28,79 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
         }
     }
 
-    // Build a list of all interior walkable cells (not border, not corners)
-    // then scatter rooms randomly across them
-    const int ROOM_STEP = 4;
-    const int ROOMS_X = (FLOOR_WIDTH  - 2) / ROOM_STEP;
-    const int ROOMS_Y = (FLOOR_HEIGHT - 2) / ROOM_STEP;
-
-    // carve rooms and corridors (keep the grid structure)
-    for (int gx = 0; gx < ROOMS_X; gx++) {
-        for (int gy = 0; gy < ROOMS_Y; gy++) {
-            int rx = 1 + gx * ROOM_STEP;
-            int ry = 1 + gy * ROOM_STEP;
-            for (int dx = 0; dx < 2; dx++)
-                for (int dy = 0; dy < 2; dy++)
-                    floor->grid[rx + dx][ry + dy].type = EMPTY;
-            if (gx + 1 < ROOMS_X) {
-                int cx = rx + 2;
-                floor->grid[cx][ry].type     = EMPTY;
-                floor->grid[cx][ry + 1].type = EMPTY;
-            }
-            if (gy + 1 < ROOMS_Y) {
-                int cy = ry + 2;
-                floor->grid[rx][cy].type     = EMPTY;
-                floor->grid[rx + 1][cy].type = EMPTY;
-            }
+    // randomly scatter walls across interior cells (~30% chance)
+    for (int x = 1; x < FLOOR_WIDTH - 1; x++) {
+        for (int y = 1; y < FLOOR_HEIGHT - 1; y++) {
+            if (rand() % 10 < 3)
+                floor->grid[x][y].type = HIDDEN;
         }
     }
 
-    // Floor 10: boss floor — single Cerberus in centre, no exit, no lore
-    if (floorNumber == 10) {
-        int cx = FLOOR_WIDTH  / 2;
+    // floor 10 — boss room
+    if (floorNumber == TOTAL_FLOORS) {
+        int cx = FLOOR_WIDTH / 2;
         int cy = FLOOR_HEIGHT / 2;
-        floor->grid[cx][cy].type  = MONSTER;
+        floor->grid[cx][cy].type  = EXIT;
         floor->playerX = 1;
         floor->playerY = 1;
         floor->grid[1][1].type    = EMPTY;
         floor->grid[1][1].visited = true;
-        for (int dx = 0; dx < 2; dx++)
-            for (int dy = 0; dy < 2; dy++)
-                floor->grid[1 + dx][1 + dy].visited = true;
         return floor;
     }
 
-    // Collect all candidate room anchor cells (top-left of each 2x2 room block)
-    // excluding player start (gx==0,gy==0) and exit cell (last gx,gy)
-    int candX[20], candY[20];
+    // collect all valid interior non-wall positions
+    int candX[200], candY[200];
     int candCount = 0;
-    for (int gx = 0; gx < ROOMS_X; gx++) {
-        for (int gy = 0; gy < ROOMS_Y; gy++) {
-            if (gx == 0 && gy == 0) continue;
-            if (gx == ROOMS_X - 1 && gy == ROOMS_Y - 1) continue;
-            candX[candCount] = 1 + gx * ROOM_STEP;
-            candY[candCount] = 1 + gy * ROOM_STEP;
-            candCount++;
+    for (int x = 2; x < FLOOR_WIDTH - 2; x++) {
+        for (int y = 2; y < FLOOR_HEIGHT - 2; y++) {
+            if (floor->grid[x][y].type == EMPTY)  {
+                candX[candCount] = x;
+                candY[candCount] = y;
+                candCount++;
+            }
         }
     }
 
-    // Shuffle candidates using Fisher-Yates
+    // Fisher-Yates shuffle
     for (int i = candCount - 1; i > 0; i--) {
         int j = rand() % (i + 1);
         int tx = candX[i]; candX[i] = candX[j]; candX[j] = tx;
         int ty = candY[i]; candY[i] = candY[j]; candY[j] = ty;
     }
 
-    // 6 candidate slots total. Lore is placed FIRST so it is always guaranteed.
-    // Counts per difficulty must sum to <= 6.
-    // EASY:   1 lore + 2 enemies + 1 treasure + 1 puzzle + 1 trap  = 6
-    // NORMAL: 1 lore + 2 enemies + 1 treasure + 1 puzzle + 1 trap  = 6
-    // HARD:   1 lore + 3 enemies + 1 treasure + 0 puzzle + 1 trap  = 6
-    int numLore     = 1;
+    // place rooms in shuffled positions
     int numEnemies  = (difficulty == HARD) ? 3 : 2;
     int numTreasure = 1;
     int numPuzzle   = (difficulty == HARD) ? 0 : 1;
     int numTrap     = 1;
+    int numLore     = 1;
 
-    // Place rooms into shuffled candidate slots — lore first, always guaranteed
     int idx = 0;
-    // place lore
-for (int k = 0; k < numLore && idx < candCount; k++, idx++)
-    floor->grid[candX[idx]][candY[idx]].type = LORE;
-// place enemies
-for (int k = 0; k < numEnemies && idx < candCount; k++, idx++)
-    floor->grid[candX[idx]][candY[idx]].type = MONSTER;
-// place treasure
-for (int k = 0; k < numTreasure && idx < candCount; k++, idx++)
-    floor->grid[candX[idx]][candY[idx]].type = TREASURE;
-// place puzzles
-for (int k = 0; k < numPuzzle && idx < candCount; k++, idx++)
-    floor->grid[candX[idx]][candY[idx]].type = PUZZLE;
-// place traps
-for (int k = 0; k < numTrap && idx < candCount; k++, idx++)
-    floor->grid[candX[idx]][candY[idx]].type = TRAP;
+    for (int k = 0; k < numLore     && idx < candCount; k++, idx++)
+        floor->grid[candX[idx]][candY[idx]].type = LORE;
+    for (int k = 0; k < numEnemies  && idx < candCount; k++, idx++)
+        floor->grid[candX[idx]][candY[idx]].type = MONSTER;
+    for (int k = 0; k < numTreasure && idx < candCount; k++, idx++)
+        floor->grid[candX[idx]][candY[idx]].type = TREASURE;
+    for (int k = 0; k < numPuzzle   && idx < candCount; k++, idx++)
+        floor->grid[candX[idx]][candY[idx]].type = PUZZLE;
+    for (int k = 0; k < numTrap     && idx < candCount; k++, idx++)
+        floor->grid[candX[idx]][candY[idx]].type = TRAP;
 
-    // Exit at far corner
-    int exitX = 1 + (ROOMS_X - 1) * ROOM_STEP + 1;
-    int exitY = 1 + (ROOMS_Y - 1) * ROOM_STEP + 1;
-    floor->grid[exitX][exitY].type = EXIT;
+    // exit at bottom-right area
+    floor->grid[FLOOR_WIDTH - 2][FLOOR_HEIGHT - 2].type = EXIT;
 
-    // Player start
+    // player starts top-left
     floor->playerX = 1;
     floor->playerY = 1;
     floor->grid[1][1].type    = EMPTY;
     floor->grid[1][1].visited = true;
-    for (int dx = 0; dx < 2; dx++)
-        for (int dy = 0; dy < 2; dy++)
-            floor->grid[1 + dx][1 + dy].visited = true;
+
+    // reveal start area
+    for (int dx = 0; dx < 3; dx++)
+        for (int dy = 0; dy < 3; dy++)
+            if (floor->grid[1+dx][1+dy].type != HIDDEN)
+                floor->grid[1+dx][1+dy].visited = true;
 
     return floor;
 }
@@ -179,7 +148,7 @@ bool isValidMove(const Floor* floor, int x, int y) {
     if (!floor || x <= 0 || x >= floor->width - 1 || y <= 0 || y >= floor->height - 1)
         return false;
     const Room& r = floor->grid[x][y];
-    if (r.type == HIDDEN && !r.revealed) return false;
+    if (r.type == HIDDEN) return false;
     return true;
 }
 
@@ -192,7 +161,7 @@ void markVisited(Floor* floor, int x, int y) {
     int dy[] = { 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 2, -2 };
     for (int d = 0; d < 12; d++) {
         Room* neighbour = getRoom(floor, x + dx[d], y + dy[d]);
-        if (neighbour && !neighbour->visited)
+        if (neighbour && !neighbour->visited && neighbour->type != HIDDEN)
             neighbour->visited = true;
     }
 }
@@ -208,7 +177,7 @@ static std::string roomSymbol(const Room& room, bool isPlayer) {
         case LORE:     return CYAN + std::string("L") + RESET;
         case EXIT:     return BOLD + std::string(">") + RESET;
         case PUZZLE:   return MAGENTA + std::string("P") + RESET;
-        case HIDDEN:   return room.revealed ? DARK_GREY + std::string("?") + RESET : "#";
+        case HIDDEN:   return "#";
         default:       return ".";
     }
 }

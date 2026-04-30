@@ -226,15 +226,23 @@ int main() {
                     }
 
                     case EXIT: {
-                        // Floors 1-9: solve cipher to advance.
-                        bool cipherOpensExit = false;
-                        PuzzleResult cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
-                        if (cr == SOLVED) {
-                            player.floor++;
-                            floorDone = true;
+                        if (player.floor == TOTAL_FLOORS) {
+                            // floor 10 — boss fight
+                            Enemy cerberus = getEnemyForFloor(10);
+                            encounter_combat(player, cerberus);
+                            if (isDead(player)) gameOver = true;
+                            else won = true;
                         } else {
-                            cout << RED << "  The exit remains sealed." << RESET << endl;
-                            cin.ignore(10000, '\n');
+                            // floors 1-9 — cipher gates the exit
+                            bool cipherOpensExit = false;
+                            PuzzleResult cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
+                            if (cr == SOLVED) {
+                                player.floor++;
+                                floorDone = true;
+                            } else {
+                                cout << RED << "  The exit remains sealed." << RESET << endl;
+                                cin.ignore(10000, '\n');
+                            }
                         }
                         break;
                     }
@@ -249,6 +257,7 @@ int main() {
 
         
         // game over
+        // game over
         if (gameOver) {
             if (player.difficulty == HARD) deleteSave();
             showGameOver(player);
@@ -258,7 +267,7 @@ int main() {
             cin.ignore(10000, '\n');
 
             if (toupper(retry) == 'R') {
-                //free inventory and fully reset player for retry
+                // free inventory then reset player
                 for (int i = 0; i < player.inventorySize; i++)
                     delete player.inventory[i];
                 string savedName = player.name;
@@ -266,9 +275,9 @@ int main() {
                 initPlayer(player, savedName, savedDiff);
                 gameOver = false;
                 won = false;
-                // loop continues — new run, same name and difficulty
+                continue; // restart the outer while(running) loop = new game same settings
             }
-            // any other key falls through and returns to title screen
+            // any other key returns to title screen — outer while(running) continues naturally
         }
 
         // victory
