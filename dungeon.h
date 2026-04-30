@@ -7,6 +7,10 @@
 const int FLOOR_WIDTH  = 20;
 const int FLOOR_HEIGHT = 12;
 
+// Checks if there is a reachable path to the exit
+// Returns true if there is at least one path
+bool isReachable(int floorNumber, Floor *floor);
+
 // Allocates and returns a new floor with randomised rooms
 // Caller must free with freeFloor()
 Floor* generateFloor(int floorNumber, Difficulty difficulty);

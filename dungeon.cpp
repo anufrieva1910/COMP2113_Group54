@@ -3,20 +3,36 @@
 #include <cstdlib>
 #include "ui.h"
 
-//search if the exit is reachable by algorithm
-bool isReachable(Floor* floor) {
+// Checks if there is a reachable path to the exit
+// Returns true if there is at least one path
+bool isReachable(int floorNumber, Floor* floor) {
     if (!floor) {
         return false;
     }
+
+    // Set the starting point of the character to (1,1)
     const int startX = 1;
     const int startY = 1;
-    const int exitX = FLOOR_WIDTH - 2;
-    const int exitY = FLOOR_HEIGHT - 2;
+    int exitX ,exitY;
+
+    // Set the coordinates of the exit to (10,6) if it is floor 10
+    if (floorNumber == TOTAL_FLOORS) {
+        exitX = FLOOR_WIDTH / 2;
+        exitY = FLOOR_HEIGHT / 2;
+    }
+    // Set the coordinates of the exit to (18,10) if it is not floor 10
+    else {
+        exitX = FLOOR_WIDTH - 2;
+        exitY = FLOOR_HEIGHT - 2;
+    }
+
     int dx[] = {0, 0, 1, -1};
     int dy[] = {1, -1, 0, 0};
     bool visited[FLOOR_WIDTH][FLOOR_HEIGHT] = {false};
     int start = 0;
     int move = 0;
+
+    // Stores the reachable coordinates in two array
     int trialX[FLOOR_HEIGHT*FLOOR_WIDTH];
     int trialY[FLOOR_HEIGHT*FLOOR_WIDTH];
     trialX[move] = startX;
@@ -27,6 +43,8 @@ bool isReachable(Floor* floor) {
         int x = trialX[start];
         int y = trialY[start];
         start++;
+
+        // If the exit is reachable, return true
         if (x==exitX && y==exitY) {
             return true;
         }
@@ -90,7 +108,7 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
                 }
             }
         }
-        pathExists = isReachable(floor);
+        pathExists = isReachable(floorNumber, floor);
     }
 
     // floor 10 — boss room
