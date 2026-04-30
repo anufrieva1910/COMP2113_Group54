@@ -3,6 +3,55 @@
 #include <cstdlib>
 #include "ui.h"
 
+//search if the exit is reachable by algorithm
+bool isReachable(Floor* floor) {
+    if (!floor) {
+        return false;
+    }
+    const int startX = 1;
+    const int startY = 1;
+    const int exitX = FLOOR_WIDTH - 2;
+    const int exitY = FLOOR_HEIGHT - 2;
+    int dx[] = {0, 0, 1, -1};
+    int dy[] = {1, -1, 0, 0};
+    bool visited[FLOOR_WIDTH][FLOOR_HEIGHT] = {false};
+    int start = 0;
+    int move = 0;
+    int trialX[FLOOR_HEIGHT*FLOOR_WIDTH];
+    int trialY[FLOOR_HEIGHT*FLOOR_WIDTH];
+    trialX[move] = startX;
+    trialY[move] = startY;
+    move++;
+    
+    while (start<move) {
+        int x = trialX[start];
+        int y = trialY[start];
+        start++;
+        if (x==exitX && y==exitY) {
+            return true;
+        }
+        
+        for(int i=0; i<4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (nx < 0 || nx >= FLOOR_WIDTH || ny < 0 || ny >= FLOOR_HEIGHT) {
+                continue;
+            }
+            if (nx == 0 || nx == FLOOR_WIDTH - 1 || ny == 0 || ny == FLOOR_HEIGHT - 1) {
+                continue;
+            }
+            if (!visited[nx][ny] && floor->grid[nx][ny].type != HIDDEN) {
+                visited[nx][ny] = true;
+                trialX[move] = nx;
+                trialY[move] = ny;
+                move++;
+            }
+        }
+    }
+    return false;
+} 
+
+
 
 // Allocates and returns a new floor with randomised rooms
 // Caller must free with freeFloor()
@@ -29,11 +78,19 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     }
 
     // randomly scatter walls across interior cells (~30% chance)
-    for (int x = 1; x < FLOOR_WIDTH - 1; x++) {
-        for (int y = 1; y < FLOOR_HEIGHT - 1; y++) {
-            if (rand() % 10 < 3)
-                floor->grid[x][y].type = HIDDEN;
+    bool pathExists = false;
+    while (!pathExists) {
+        for (int x = 1; x < FLOOR_WIDTH - 1; x++) {
+            for (int y = 1; y < FLOOR_HEIGHT - 1; y++) {
+                if (rand() % 10 < 3) {
+                    floor->grid[x][y].type = HIDDEN;
+                }
+                else {
+                    floor->grid[x][y].type = EMPTY;
+                }
+            }
         }
+        pathExists = isReachable(floor);
     }
 
     // floor 10 — boss room
