@@ -21,6 +21,7 @@ void useItem(Player &player);
 
 //combat logic when player encounters the final boss
 void boss_combat(Player &player, Enemy &boss);
+
 void clearCombatLog();
 
 //combat logic when player encounters an enemy

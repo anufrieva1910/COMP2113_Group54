@@ -98,13 +98,23 @@ int main() {
                     if (result >= 0 && result < player.inventorySize) {
                         Item* used_item = player.inventory[result];
                         switch (used_item->type) {
-                            case WEAPON: player.attack += used_item->value; break;
-                            case SHIELD: player.defense += used_item->value; break;
+                            case WEAPON: 
+                                player.attack += used_item->value;
+                                cout << GREEN << player.name << " equipped " << used_item->name << " (+" << used_item->value << " ATK)" << RESET << endl;
+                                break;
+                            case SHIELD: 
+                                player.defense += used_item->value; 
+                                cout << GREEN << player.name << " equipped " << used_item->name << " (+" << used_item->value << " DEF)" << RESET << endl;
+                                break;
                             case POTION:
                                 player.hp += used_item->value;
                                 if (player.hp > player.maxHp) player.hp = player.maxHp;
+                                cout << GREEN << player.name << " used " << used_item->name << " (+" << used_item->value << " HP)" << RESET << endl;
                                 break;
-                            case LOOT: player.gold += used_item->value; break;
+                            case LOOT: 
+                                player.gold += used_item->value; 
+                                cout << GREEN << player.name << " sold " << used_item->name << " (+" << used_item->value << " Gold)" << RESET << endl;
+                                break;
                             default: break;
                         }
                         removeItem(player, result);
