@@ -103,16 +103,21 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
 
     // Place rooms into shuffled candidate slots — lore first, always guaranteed
     int idx = 0;
-    auto place = [&](RoomType t, int n) {
-        for (int k = 0; k < n && idx < candCount; k++, idx++)
-            floor->grid[candX[idx]][candY[idx]].type = t;
-    };
-
-    place(LORE,     numLore);     // placed first — guaranteed slot
-    place(MONSTER,  numEnemies);
-    place(TREASURE, numTreasure);
-    place(PUZZLE,   numPuzzle);
-    place(TRAP,     numTrap);
+    // place lore
+for (int k = 0; k < numLore && idx < candCount; k++, idx++)
+    floor->grid[candX[idx]][candY[idx]].type = LORE;
+// place enemies
+for (int k = 0; k < numEnemies && idx < candCount; k++, idx++)
+    floor->grid[candX[idx]][candY[idx]].type = MONSTER;
+// place treasure
+for (int k = 0; k < numTreasure && idx < candCount; k++, idx++)
+    floor->grid[candX[idx]][candY[idx]].type = TREASURE;
+// place puzzles
+for (int k = 0; k < numPuzzle && idx < candCount; k++, idx++)
+    floor->grid[candX[idx]][candY[idx]].type = PUZZLE;
+// place traps
+for (int k = 0; k < numTrap && idx < candCount; k++, idx++)
+    floor->grid[candX[idx]][candY[idx]].type = TRAP;
 
     // Exit at far corner
     int exitX = 1 + (ROOMS_X - 1) * ROOM_STEP + 1;
