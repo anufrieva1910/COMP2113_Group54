@@ -13,13 +13,6 @@ A story-driven terminal dungeon crawler for COMP2113 / ENGG1340, 2025-2026 Semes
 | [Gavin: Leong Kuan Hou] | [3036662579] |
 | [Kaivalya: Atyam Srilakshmi Kaivalya] | [3036519681] |
 | [Mansi: Pamitipati Venkata Manaswini] | [3036519679] |
-| Name | Module |
-|---|---|
-| Alex | Player, Puzzles, UI, Integration |
-| [Member 2] | Dungeon Generation |
-| Gavin | Combat System |
-| Kaivalya | Enemies |
-| Mansi | File I/O & Data |
 
 ---
 
