@@ -188,17 +188,9 @@ int main() {
                             && loreFragments != nullptr) {
                             player.loreFound[player.floor - 1] = true;
                             player.loreCount++;
-                            showLoreScreen(loreFragments[player.floor - 1], true);
-
-                            bool cipherOpensExit = false;
-                            PuzzleResult cr = runLoreCipher(player.floor,
-                                player.difficulty, cipherOpensExit);
-                            if (cr == SKIPPED) {
-                                int penalty = getSkipPenalty(player.difficulty);
-                                player.gold = (player.gold >= penalty)
-                                    ? player.gold - penalty : 0;
+                            showLoreScreen(loreFragments[player.floor - 1], false);
                             }
-                        }
+                        
                         room->type = EMPTY;
                         break;
                     }
@@ -232,7 +224,16 @@ int main() {
                                 won = true;
                             }
                         } else {
-                            // next floor
+                            bool cipherOpensExit = false;
+                            PuzzleResult cr = FAILED;
+                            while ( cr != SOLVED) {
+                                cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
+                            
+                                if (cr != SOLVED) {
+                                    cout << RED << " The exit remains sealed. Solve the cipher to open it." << RESET << endl;
+                                    cin.ignore(10000, '\n');
+                                }
+                            }
                             player.floor++;
                             floorDone = true;
                         }

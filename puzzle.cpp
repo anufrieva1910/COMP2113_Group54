@@ -87,7 +87,7 @@ PuzzleResult runPressurePlate(Difficulty difficulty, bool hard) {
     if (hard)
         cout << "  Enter the order to step on the tiles (e.g. 4 1 6 2 5 3)." << endl;
     else
-        cout << "  Enter the order to step on the tiles (e.g. 2 3 1)." << endl;
+        cout << "  Enter the order to step on the tiles (e.g. 1 2 3)." << endl;
 
     cout << "  Type S to skip (costs " << getSkipPenalty(difficulty) << " gold)." << endl;
     cout << endl;
@@ -458,35 +458,22 @@ PuzzleResult runLoreCipher(int floorNum, Difficulty difficulty, bool &cipherOpen
 
     cout << endl;
     cout << "  What word do they spell?" << endl;
-    cout << "  Type S to skip." << endl;
     cout << endl;
 
-    while (retries > 0) {
-        cout << "  (" << retries << (retries == 1 ? " attempt" : " attempts") << " left)  > ";
+    while (true) {
+        cout << "  > ";
 
         string input;
         cin >> input;
         cin.ignore(10000, '\n');
         toUpper(input);
 
-        if (input == "S") {
-            cout << endl << "  The letters blur back into the stone." << endl << endl;
-            return SKIPPED;
-        }
 
         if (input == cipherAnswers[floorNum]) {
-            if (cipherOpensExit)
-                cout << endl << "  The wall shifts. The path to the next floor is revealed." << endl << endl;
-            else
-                cout << endl << "  A section of wall grinds aside. A hidden passage opens." << endl << endl;
+            cout << endl << "  The wall shifts. The path to the next floor is revealed." << endl << endl;
             return SOLVED;
         } else {
-            retries--;
-            if (retries > 0)
-                cout << endl << "  Nothing happens. Look closer." << endl << endl;
+            cout << endl << "  Nothing happens. Look closer." << endl << endl;
         }
     }
-
-    cout << endl << "  The message is lost. The letters mean nothing now." << endl << endl;
-    return FAILED;
 }

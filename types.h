@@ -23,6 +23,7 @@ struct LoreFragment {
     int floorNumber;
     std::string title;
     std::string text;
+    std::string intro;
 };
 
 //one room in the dungeon grid

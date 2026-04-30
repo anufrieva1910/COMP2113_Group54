@@ -43,24 +43,40 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
         }
     }
 
-    // Assign random types to interior cells
-    for (int rx = 1; rx < FLOOR_WIDTH - 1; rx += 2) {
-        for (int ry = 1; ry < FLOOR_HEIGHT - 1; ry+=2) {
-            floor->grid[rx][ry].type = EMPTY;
+    const int ROOM_STEP = 4;
+    const int ROOMS_X = (FLOOR_WIDTH - 2) / ROOM_STEP;
+    const int ROOMS_Y = (FLOOR_HEIGHT - 2) / ROOM_STEP;
+
+    // carve rooms and corridors
+    for (int gx = 0; gx < ROOMS_X; gx++) {
+        for (int gy = 0; gy < ROOMS_Y; gy++) {
+            int rx = 1 + gx * ROOM_STEP;
+            int ry = 1 + gy * ROOM_STEP;
             
-            if (rx + 2 < FLOOR_WIDTH - 1) {
-                floor->grid[rx + 1][ry].type = EMPTY;
+            for (int dx = 0; dx < 2; dx++) {
+                for (int dy = 0; dy < 2; dy++) {
+                    floor->grid[rx + dx][ry + dy].type = EMPTY;
+                }
+            }
+            
+            if (gx + 1 < ROOMS_X) {
+                int cx = rx + 2;
+                floor->grid[cx][ry].type = EMPTY;
+                floor->grid[cx][ry + 1].type = EMPTY;
+            }
+            if (gy + 1 < ROOMS_Y) {
+                int cy = ry + 2;
+                floor->grid[rx][cy].type = EMPTY;
+                floor->grid[rx + 1][cy].type = EMPTY;    
             }
 
-            if (ry + 2 < FLOOR_HEIGHT - 1) {
-                floor->grid[rx][ry + 1].type = EMPTY;
+            
             }
         }
-    }
-
-
-    // Place exit at bottom-right
-    floor->grid[FLOOR_WIDTH - 2][FLOOR_HEIGHT - 2].type = EXIT;
+    
+    int exitX = 1 + (ROOMS_X - 1) * ROOM_STEP + 1;
+    int exitY = 1 + (ROOMS_Y - 1) * ROOM_STEP + 1;
+    floor->grid[exitX][exitY].type = EXIT;
 
     //place special rooms - track counts
     int enemies = 0;
@@ -68,47 +84,45 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     int puzzles = 0;
     int treasure = 0;
 
-    int maxEnemies = 2 + floorNumber;
+    int maxEnemies = 4;
     int maxLore = 1;
-    int maxPuzzles = 2;
+    int maxPuzzles = 3;
     int maxTreasure = 2;
 
 
-    for (int rx = 1; rx < FLOOR_WIDTH - 1; rx+=2) {
-        for (int ry = 1; ry < FLOOR_HEIGHT - 1; ry+=2) {
-            if (rx == 1 && ry == 1) continue; // skip player start
-            if (rx == FLOOR_WIDTH - 2 && ry == FLOOR_HEIGHT - 2) continue; // skip exit
+    for (int gx = 0; gx < ROOMS_X; gx++) {
+        for (int gy = 0; gy < ROOMS_Y; gy++) {
+            if (gx == 0 && gy == 0) continue; // skip player start
+            if (gx == ROOMS_X - 1 && gy == ROOMS_Y - 1) continue; // skip exit
+
+            int rx = 1 + gx * ROOM_STEP;
+            int ry = 1 + gy * ROOM_STEP;
+            RoomType type = EMPTY;
 
             int roll = rand() % 10;
             if (roll < 4 && enemies < maxEnemies) {
-                floor->grid[rx][ry].type = MONSTER;
+                type = MONSTER;
                 enemies++;
             } else if (roll == 7 && lore < maxLore) {
-                floor->grid[rx][ry].type = LORE;
+                type = LORE;
                 lore++;
             } else if (roll == 9 && puzzles < maxPuzzles) {
-                floor->grid[rx][ry].type = PUZZLE;
+                type = PUZZLE;
                 puzzles++;
             } else if (roll == 6 && treasure < maxTreasure) {
-                floor->grid[rx][ry].type = TREASURE;
+                type = TREASURE;
                 treasure++;
             } else {
-                floor->grid[rx][ry].type = randomRoomType(floorNumber, difficulty);
+                type = TRAP;
             }
+            floor->grid[rx][ry].type = type;
         }
     }
 
     if (lore == 0) {
-        bool placed = false;
-        while (!placed) {
-            int rx = 1 + (rand() % (FLOOR_WIDTH - 2)/2)*2;
-            int ry = 1 + rand() % (FLOOR_HEIGHT - 2);
-            if (rx == 1 && ry == 1) continue; // skip player start
-            if (rx == FLOOR_WIDTH - 2 && ry == FLOOR_HEIGHT - 2) continue; // skip exit
-            floor->grid[rx][ry].type = LORE;
-            placed = true;
-            
-        }
+        int rx = 1 + ROOM_STEP; 
+        int ry = 1;
+        floor->grid[rx][ry].type = LORE;
     }
 
     // Set player start and reveal surrounding rooms
@@ -117,13 +131,10 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
     floor->grid[1][1].type    = EMPTY;
     floor->grid[1][1].visited = true;
 
-    int dx[] = { 0, 0, 1, -1, 1, 1, -1, -1 };
-    int dy[] = { 1, -1, 0, 0, 1, -1, 1, -1 };
-    for (int d = 0; d < 8; d++) {
-        int nx = 1 + dx[d];
-        int ny = 1 + dy[d];
-        if (nx > 0 && nx < FLOOR_WIDTH - 1 && ny > 0 && ny < FLOOR_HEIGHT - 1)
-            floor->grid[nx][ny].visited = true;
+    for (int dx = 0; dx < 2; dx++) {
+        for (int dy = 0; dy < 2; dy++) {
+            floor->grid[1 + dx][1 + dy].visited = true;
+        }
     }
 
     return floor;

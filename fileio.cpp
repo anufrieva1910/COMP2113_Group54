@@ -243,7 +243,7 @@ LoreFragment* loadLoreFragments(int& count) {
     std::string line;
     int total = 0;
     while (std::getline(in, line))
-        if (line.substr(0, 5) == "FLOOR") ++total;
+        if (line.substr(0, 5) == "FLOOR") total++;
 
     if (total == 0) {
         return nullptr;
@@ -257,6 +257,7 @@ LoreFragment* loadLoreFragments(int& count) {
     in.seekg(0);
     int idx = -1;
     bool inText = false;
+    bool inWallArt = false;
 
     while (std::getline(in, line)) {
         if (!inText &&line.empty() || line[0] == '#') continue;
@@ -273,12 +274,26 @@ LoreFragment* loadLoreFragments(int& count) {
             frags[idx].title = line.substr(6);
         } else if (line == "TEXT_START") {
             inText = true;
+            inWallArt = false;
         } else if (line == "TEXT_END") {
             inText = false;
+            inWallArt = false;
         } else if (inText) {
-            if (line.substr(0, 10) == "TYPE " || line.substr(0, 7) == "CIPHER ") continue;
-            if (!frags[idx].text.empty()) frags[idx].text += "\n";
-            frags[idx].text += line;
+            if (line == "[WALL ART]") {
+                inWallArt = true;
+                continue;
+            }
+            if (line.substr(0, 13) == "[LOST SCHOLAR") {
+                inWallArt = false;
+                continue;
+            }
+            if (inWallArt) {
+                if (!frags[idx].text.empty()) frags[idx].text += "\n";
+                frags[idx].text += line;
+            } else {
+                if (!frags[idx].intro.empty()) frags[idx].intro += "\n";
+                frags[idx].intro += line;
+            }
         }
     }   
 

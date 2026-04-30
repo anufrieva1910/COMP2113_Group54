@@ -225,7 +225,7 @@ void showFloorEntry(int floorNum, const LoreFragment &fragment) {
     if (diaryPos != (int)string::npos) cutPos = min(cutPos, diaryPos);
     entry = text.substr(0, cutPos);
 
-    typewrite(entry, 18);
+    typewrite(fragment.intro, 18);
     cout << endl;
     cout << "  Press Enter to continue...";
     cin.ignore(10000, '\n');
@@ -236,32 +236,32 @@ void showMap(const Floor &floor) {
     (void)floor; // suppress unused warning
 }
 
-void showCombatScreen(const Player &player, const Enemy &enemy, const string &enemyArt) {
+void showCombatScreen(const Player &player, const Enemy &enemy, const std::string &enemyArt) {
     clearScreen();
     cout << "=================================================================" << endl;
-    cout << "  COMBAT" << endl;
+    cout << "  COMBAT  --  Floor " << player.floor << endl;
     cout << "=================================================================" << endl;
     cout << endl;
-
-    // cat warrior on left, enemy on right
-    cout << "   /\\_/\\                    " << enemy.name << endl;
-    cout << "  ( o o )       VS" << endl;
-    cout << "   /   \\" << endl;
+    cout << "   /\\_/\\                         " << enemy.name << endl;
+    cout << "  ( o o )        VS" << endl;
+    cout << "   > ^ <" << endl;
     cout << endl;
     cout << enemyArt << endl;
     cout << endl;
     cout << "-----------------------------------------------------------------" << endl;
-    cout << "  [YOU]   HP: " << player.hp << "/" << player.maxHp
-         << "   ATK: " << player.attack
-         << "   DEF: " << player.defense << endl;
-    cout << "  [" << enemy.name << "]   HP: " << enemy.hp << "/" << enemy.maxHp << endl;
+    cout << "  " << YELLOW << "[YOU]" << RESET
+         << "  HP: " << player.hp << "/" << player.maxHp
+         << "  ATK: " << player.attack
+         << "  DEF: " << player.defense << endl;
+    cout << "  " << RED << "[" << enemy.name << "]" << RESET
+         << "  HP: " << enemy.hp << "/" << enemy.maxHp
+         << "  ATK: " << enemy.attack
+         << "  DEF: " << enemy.defense << endl;
     cout << "-----------------------------------------------------------------" << endl;
     cout << endl;
     cout << "  [ A ] Attack    [ I ] Use Item    [ R ] Run" << endl;
     cout << endl;
-
     showCombatLog();
-
     cout << "=================================================================" << endl;
     cout << "  > ";
 }
