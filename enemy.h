@@ -4,7 +4,6 @@
 #include "types.h"
 
 // returns the enemy for a given floor
-Enemy getEnemyForFloor(int floor);
-
+Enemy getEnemyForFloor(int floor, Difficulty difficulty = NORMAL);
 
 #endif

@@ -42,9 +42,9 @@ void showCombatScreen(const Player &player, const Enemy &enemy, const std::strin
 void addCombatLog(const std::string &line);
 void showCombatLog();
 
-// lore screen 
-// shows cipher prompt at the bottom
+// returns 'C' if cipher attempted, 'X' to leave
 void showLoreScreen(const LoreFragment &fragment, bool cipherAvailable);
+void clearCombatLog();
 
 // inventory screen 
 int showInventory(const Player &player);

@@ -1,31 +1,22 @@
 #include "enemy.h"
-#include <iostream>
 using namespace std;
 
-// Enemy definitions by floor range
-Enemy getEnemyForFloor(int floor) {
-    if (floor ==1) {
-        return {"Bat Swarm", 12, 12, 6, 3, false, 1};
-    } else if (floor ==2) {
-        return {"Cave Rats", 15, 15, 7, 4, false, 1};
-    } else if (floor ==3) {
-        return {"Stone Beetle", 30, 30, 8, 5, false, 1};
-    } else if (floor == 4) {
-        return {"Stray Dogs", 20, 20, 10, 6, false, 1};
-    } else if (floor == 5) {
-        return {"Venomous Snake", 25, 25, 13, 8, false, 1};
-    } else if (floor == 6) {
-        return {"Rabid Jackal", 30, 30, 15, 10, false, 1};
-    } else if (floor == 7) {
-        return {"Corrupted Hound", 35, 35, 17, 13, false, 1};
-    } else if (floor == 8) {
-        return {"Shadow Owl", 45, 45, 20, 15, false, 1};
-    } else if (floor == 9) {
-        return {"Phantom Direwolf", 50, 50, 25, 17, false, 1};
-    } else if (floor == 10) {
-        return {"Cerberus", 150, 150, 30, 20, true, 1};
+Enemy getEnemyForFloor(int floor, Difficulty difficulty) {
+    Enemy e;
+    switch (floor) {
+        case 1:  e = {"Bat Swarm",        25,  25,  8,  3, false, 1}; break;
+        case 2:  e = {"Cave Rats",         35,  35, 10,  4, false, 1}; break;
+        case 3:  e = {"Stone Beetle",      50,  50, 13,  6, false, 1}; break;
+        case 4:  e = {"Stray Dogs",        60,  60, 16,  7, false, 1}; break;
+        case 5:  e = {"Venomous Snake",    70,  70, 19,  9, false, 1}; break;
+        case 6:  e = {"Rabid Jackal",      85,  85, 22, 11, false, 1}; break;
+        case 7:  e = {"Corrupted Hound",  100, 100, 26, 13, false, 1}; break;
+        case 8:  e = {"Shadow Owl",       115, 115, 30, 15, false, 1}; break;
+        case 9:  e = {"Phantom Direwolf", 135, 135, 35, 17, false, 1}; break;
+        case 10: e = {"Cerberus",         200, 200, 40, 20, true,  1}; break;
+        default: e = {"Unknown",           20,  20,  6,  2, false, 1}; break;
     }
-    return {"Unknown", 10, 10, 1, 1, false, 1};
+    if (difficulty == HARD)      e.attack = e.attack * 3 / 2;
+    else if (difficulty == EASY) e.attack = e.attack * 4 / 5;
+    return e;
 }
-
-

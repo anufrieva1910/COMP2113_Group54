@@ -27,99 +27,106 @@ Floor* generateFloor(int floorNumber, Difficulty difficulty) {
         }
     }
 
+    // Build a list of all interior walkable cells (not border, not corners)
+    // then scatter rooms randomly across them
     const int ROOM_STEP = 4;
-    const int ROOMS_X = (FLOOR_WIDTH - 2) / ROOM_STEP;
+    const int ROOMS_X = (FLOOR_WIDTH  - 2) / ROOM_STEP;
     const int ROOMS_Y = (FLOOR_HEIGHT - 2) / ROOM_STEP;
 
-    // carve rooms and corridors
+    // carve rooms and corridors (keep the grid structure)
     for (int gx = 0; gx < ROOMS_X; gx++) {
         for (int gy = 0; gy < ROOMS_Y; gy++) {
             int rx = 1 + gx * ROOM_STEP;
             int ry = 1 + gy * ROOM_STEP;
-            
-            for (int dx = 0; dx < 2; dx++) {
-                for (int dy = 0; dy < 2; dy++) {
+            for (int dx = 0; dx < 2; dx++)
+                for (int dy = 0; dy < 2; dy++)
                     floor->grid[rx + dx][ry + dy].type = EMPTY;
-                }
-            }
-            
             if (gx + 1 < ROOMS_X) {
                 int cx = rx + 2;
-                floor->grid[cx][ry].type = EMPTY;
+                floor->grid[cx][ry].type     = EMPTY;
                 floor->grid[cx][ry + 1].type = EMPTY;
             }
             if (gy + 1 < ROOMS_Y) {
                 int cy = ry + 2;
-                floor->grid[rx][cy].type = EMPTY;
-                floor->grid[rx + 1][cy].type = EMPTY;    
-            }
-
-            
+                floor->grid[rx][cy].type     = EMPTY;
+                floor->grid[rx + 1][cy].type = EMPTY;
             }
         }
-    
+    }
+
+    // Floor 10: boss floor — single Cerberus in centre, no exit, no lore
+    if (floorNumber == 10) {
+        int cx = FLOOR_WIDTH  / 2;
+        int cy = FLOOR_HEIGHT / 2;
+        floor->grid[cx][cy].type  = MONSTER;
+        floor->playerX = 1;
+        floor->playerY = 1;
+        floor->grid[1][1].type    = EMPTY;
+        floor->grid[1][1].visited = true;
+        for (int dx = 0; dx < 2; dx++)
+            for (int dy = 0; dy < 2; dy++)
+                floor->grid[1 + dx][1 + dy].visited = true;
+        return floor;
+    }
+
+    // Collect all candidate room anchor cells (top-left of each 2x2 room block)
+    // excluding player start (gx==0,gy==0) and exit cell (last gx,gy)
+    int candX[20], candY[20];
+    int candCount = 0;
+    for (int gx = 0; gx < ROOMS_X; gx++) {
+        for (int gy = 0; gy < ROOMS_Y; gy++) {
+            if (gx == 0 && gy == 0) continue;
+            if (gx == ROOMS_X - 1 && gy == ROOMS_Y - 1) continue;
+            candX[candCount] = 1 + gx * ROOM_STEP;
+            candY[candCount] = 1 + gy * ROOM_STEP;
+            candCount++;
+        }
+    }
+
+    // Shuffle candidates using Fisher-Yates
+    for (int i = candCount - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        int tx = candX[i]; candX[i] = candX[j]; candX[j] = tx;
+        int ty = candY[i]; candY[i] = candY[j]; candY[j] = ty;
+    }
+
+    // 6 candidate slots total. Lore is placed FIRST so it is always guaranteed.
+    // Counts per difficulty must sum to <= 6.
+    // EASY:   1 lore + 2 enemies + 1 treasure + 1 puzzle + 1 trap  = 6
+    // NORMAL: 1 lore + 2 enemies + 1 treasure + 1 puzzle + 1 trap  = 6
+    // HARD:   1 lore + 3 enemies + 1 treasure + 0 puzzle + 1 trap  = 6
+    int numLore     = 1;
+    int numEnemies  = (difficulty == HARD) ? 3 : 2;
+    int numTreasure = 1;
+    int numPuzzle   = (difficulty == HARD) ? 0 : 1;
+    int numTrap     = 1;
+
+    // Place rooms into shuffled candidate slots — lore first, always guaranteed
+    int idx = 0;
+    auto place = [&](RoomType t, int n) {
+        for (int k = 0; k < n && idx < candCount; k++, idx++)
+            floor->grid[candX[idx]][candY[idx]].type = t;
+    };
+
+    place(LORE,     numLore);     // placed first — guaranteed slot
+    place(MONSTER,  numEnemies);
+    place(TREASURE, numTreasure);
+    place(PUZZLE,   numPuzzle);
+    place(TRAP,     numTrap);
+
+    // Exit at far corner
     int exitX = 1 + (ROOMS_X - 1) * ROOM_STEP + 1;
     int exitY = 1 + (ROOMS_Y - 1) * ROOM_STEP + 1;
     floor->grid[exitX][exitY].type = EXIT;
 
-    //place special rooms - track counts
-    int enemies = 0;
-    int lore = 0;
-    int puzzles = 0;
-    int treasure = 0;
-
-    int maxEnemies = (difficulty == EASY) ? 2: (difficulty == HARD) ? 6 : 4;
-    int maxLore = 1;
-    int maxPuzzles = (difficulty == HARD) ? 1 : 3;
-    int maxTreasure = (difficulty == EASY) ? 3 : (difficulty == HARD) ? 1 : 2;
-
-
-    for (int gx = 0; gx < ROOMS_X; gx++) {
-        for (int gy = 0; gy < ROOMS_Y; gy++) {
-            if (gx == 0 && gy == 0) continue; // skip player start
-            if (gx == ROOMS_X - 1 && gy == ROOMS_Y - 1) continue; // skip exit
-
-            int rx = 1 + gx * ROOM_STEP;
-            int ry = 1 + gy * ROOM_STEP;
-            RoomType type = EMPTY;
-
-            int roll = rand() % 10;
-            if (roll < 4 && enemies < maxEnemies) {
-                type = MONSTER;
-                enemies++;
-            } else if (roll == 7 && lore < maxLore) {
-                type = LORE;
-                lore++;
-            } else if (roll == 9 && puzzles < maxPuzzles) {
-                type = PUZZLE;
-                puzzles++;
-            } else if (roll == 6 && treasure < maxTreasure) {
-                type = TREASURE;
-                treasure++;
-            } else {
-                type = TRAP;
-            }
-            floor->grid[rx][ry].type = type;
-        }
-    }
-
-    if (lore == 0) {
-        int rx = 1 + ROOM_STEP; 
-        int ry = 1;
-        floor->grid[rx][ry].type = LORE;
-    }
-
-    // Set player start and reveal surrounding rooms
+    // Player start
     floor->playerX = 1;
     floor->playerY = 1;
     floor->grid[1][1].type    = EMPTY;
     floor->grid[1][1].visited = true;
-
-    for (int dx = 0; dx < 2; dx++) {
-        for (int dy = 0; dy < 2; dy++) {
+    for (int dx = 0; dx < 2; dx++)
+        for (int dy = 0; dy < 2; dy++)
             floor->grid[1 + dx][1 + dy].visited = true;
-        }
-    }
 
     return floor;
 }

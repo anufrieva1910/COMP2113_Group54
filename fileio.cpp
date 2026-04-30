@@ -287,6 +287,8 @@ LoreFragment* loadLoreFragments(int& count) {
             }
             if (line.substr(0, 13) == "[LOST SCHOLAR") {
                 inWallArt = false;
+                // separator so showFloorEntry can split atmospheric from diary
+                if (!frags[idx].intro.empty()) frags[idx].intro += "\n---DIARY---\n";
                 continue;
             }
             if (inWallArt) {

@@ -8,15 +8,10 @@
 #include "ui.h"
 using namespace std;
 
+// defense reduces damage by 1/3 so enemies deal real damage but gear matters
 int calculateDamage(int attack, int defense) {
-    int damage;
-    damage=attack-defense;
-    if (damage<=0) {
-        return 1;
-    }
-    else {
-        return damage;
-    }
+    int damage = attack - (defense / 3);
+    return (damage < 1) ? 1 : damage;
 }
 
 void turn_change(string &turn) {
@@ -64,64 +59,89 @@ void useItem(Player &player) {
 }
 
 void random_lootdrop(Player &player, Enemy enemy) {
-    int index=rand() % NUM_ITEMS;
+    int index = rand() % NUM_ITEMS;
     const Item &loot = ITEMS_LIST[index];
     Item *itemPtr = new Item(loot);
     addItem(player, itemPtr);
-    cout << "You found " << loot.name << " from " << enemy.name << endl;
+    addCombatLog(GREEN + string("Dropped: ") + loot.name + RESET);
 }
 
 void boss_combat(Player &player, Enemy &boss) {
-    string turn="enemy";
-    bool phase_two=false, phase_three=false;
-    while(player.hp>0 and boss.hp>0) {
-        if (turn=="player") {
+    clearCombatLog();
+    string turn = "enemy";  // Cerberus always strikes first
+    bool phase_two   = false;
+    bool phase_three = false;
+
+    addCombatLog(RED + string("CERBERUS emerges from the darkness!") + RESET);
+
+    while (player.hp > 0 && boss.hp > 0) {
+        if (turn == "player") {
             showCombatScreen(player, boss, getEnemyArt(boss.name));
             char move;
             cin >> move;
             cin.ignore(10000, '\n');
+
             switch (move) {
-                case 'A':
-                case 'a': {
-                    int damage=calculateDamage(player.attack,boss.defense);
-                    boss.hp-=damage;
-                    //attack boss ui
+                case 'A': case 'a': {
+                    int dmg = calculateDamage(player.attack, boss.defense);
+                    boss.hp -= dmg;
+                    if (boss.hp < 0) boss.hp = 0;
+                    addCombatLog("You strike Cerberus for " + to_string(dmg) + " damage. Cerberus HP: " + to_string(boss.hp));
                     break;
                 }
                 case 'I':
                 case 'i': {
                     useItem(player);
-                    break;
+                    continue;  // using an item does not end your turn
                 }
                 
+                default:
+                    addCombatLog("Invalid action.");
+                    break;
             }
-            if (!phase_two && boss.hp<=boss.maxHp*2/3) {
-                //boss phase 2 ui
-                boss.phase=2;
-                boss.attack=25;
-                boss.defense=15;
-                phase_two=true;
+
+            if (!phase_two && boss.hp <= boss.maxHp * 2 / 3) {
+                boss.phase   = 2;
+                boss.attack  = (player.difficulty == HARD) ? 68 : 45;
+                boss.defense = 10;
+                phase_two    = true;
+                addCombatLog(RED + string("Cerberus RAGES -- Phase 2! ATK surges!") + RESET);
             }
-            if(!phase_three && boss.hp<=boss.maxHp/3) {
-                //boss phase 3 ui
-                boss.phase=3;
-                boss.attack=30;
-                boss.defense=10;
-                phase_three=true;
+            if (!phase_three && boss.hp <= boss.maxHp / 3) {
+                boss.phase   = 3;
+                boss.attack  = (player.difficulty == HARD) ? 90 : 60;
+                boss.defense = 5;
+                phase_three  = true;
+                addCombatLog(RED + string("Cerberus is FERAL -- Phase 3! Lethal!") + RESET);
             }
-        }
-        else if (turn=="enemy") {
-            int damage=calculateDamage(boss.attack,player.defense);
-            player.hp-=damage;
+        } else {
+            int dmg = calculateDamage(boss.attack, player.defense);
+            player.hp -= dmg;
+            if (player.hp < 0) player.hp = 0;
+            addCombatLog(RED + string("Cerberus attacks for ") + to_string(dmg) + " damage! Your HP: " + to_string(player.hp) + RESET);
         }
         turn_change(turn);
     }
-    if (player.hp<=0) {
-        //game over
+
+    // post-combat result screen
+    clearScreen();
+    cout << "=================================================================" << endl;
+    cout << endl;
+    if (player.hp <= 0) {
+        cout << RED << "  Cerberus stands over you. The cave goes dark." << RESET << endl;
+        cout << endl;
+        cout << "  You fought bravely, but the beast was too powerful." << endl;
+    } else {
+        cout << GREEN << "  CERBERUS HAS FALLEN!" << RESET << endl;
+        cout << endl;
+        cout << "  The three heads go still. Silence fills the cave." << endl;
+        cout << "  Something shifts in the air..." << endl;
     }
-    else {
-        //end game; win ui
-    }
+    cout << endl;
+    cout << "=================================================================" << endl;
+    cout << "  Press Enter to continue...";
+    cin.ignore(10000, '\n');
+    clearCombatLog();
 }
 
 void encounter_combat(Player &player, Enemy &enemy) {
@@ -129,63 +149,78 @@ void encounter_combat(Player &player, Enemy &enemy) {
         boss_combat(player, enemy);
         return;
     }
+
+    clearCombatLog();
     string turn;
-    bool flee=false;
+    bool flee = false;
     randomize_start(turn);
-    while(player.hp>0 and enemy.hp>0) {
-        if (turn=="player") {
+
+    addCombatLog("A " + enemy.name + " appears!");
+
+    while (player.hp > 0 && enemy.hp > 0) {
+        if (turn == "player") {
             showCombatScreen(player, enemy, getEnemyArt(enemy.name));
             char move;
             cin >> move;
             cin.ignore(10000, '\n');
+
             switch (move) {
-                case 'A':
-                case 'a': {
-                    int damage=calculateDamage(player.attack,enemy.defense);
-                    enemy.hp-=damage;
-                    //attack ui
+                case 'A': case 'a': {
+                    int dmg = calculateDamage(player.attack, enemy.defense);
+                    enemy.hp -= dmg;
+                    if (enemy.hp < 0) enemy.hp = 0;
+                    addCombatLog("You attack for " + to_string(dmg) + " damage. "
+                        + enemy.name + " HP: " + to_string(enemy.hp));
                     break;
                 }
                 case 'I':
                 case 'i': {
                     useItem(player);
-                    break;
+                    continue;  // using an item does not end your turn
                 }
-                case 'R':
-                case 'r': {
-                    int random_flee=rand()%2;
-                    if (random_flee) {
-                        flee=true;
-                        cout << "Successfully fleed" << endl;
-                    }
-                    else {
-                        cout << "Failed to flee" << endl;
+                case 'R': case 'r': {
+                    if (rand() % 2) {
+                        flee = true;
+                        addCombatLog("You fled successfully.");
+                    } else {
+                        addCombatLog("Failed to flee!");
                     }
                     break;
                 }
-                default: {
-                    cout << "Invalid input" << endl;
+                default:
+                    addCombatLog("Invalid action.");
                     break;
-                }
             }
-        }
-        else if (turn=="enemy") {
-            int damage=calculateDamage(enemy.attack,player.defense);
-            player.hp-=damage;
+        } else {
+            int dmg = calculateDamage(enemy.attack, player.defense);
+            player.hp -= dmg;
+            if (player.hp < 0) player.hp = 0;
+            addCombatLog(RED + enemy.name + " hits for " + to_string(dmg)
+                + " damage. Your HP: " + to_string(player.hp) + RESET);
         }
         turn_change(turn);
-        if (flee) {
-            //back to map ui
-            break;
-        }
+        if (flee) break;
     }
-    if (player.hp<=0) {
-        //game over
-    }
-    else if (!flee) {
-        random_lootdrop(player, enemy);
-        //enemy defeated ui
-        //back to map ui
-    }
-}
 
+    // post-combat result screen
+    clearScreen();
+    cout << "=================================================================" << endl;
+    cout << endl;
+
+    if (player.hp <= 0) {
+        cout << RED << "  You have been defeated by " << enemy.name << "." << RESET << endl;
+    } else if (flee) {
+        cout << YELLOW << "  You escaped from " << enemy.name << "." << RESET << endl;
+    } else {
+        cout << GREEN << "  " << enemy.name << " has been defeated!" << RESET << endl;
+        cout << endl;
+        random_lootdrop(player, enemy);
+        showCombatLog();
+    }
+
+    cout << endl;
+    cout << "=================================================================" << endl;
+    cout << "  Press Enter to return to the dungeon...";
+    cin.ignore(10000, '\n');
+    clearCombatLog();
+}

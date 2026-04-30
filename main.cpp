@@ -150,13 +150,17 @@ int main() {
                 switch (room->type) {
 
                     case MONSTER: {
-                        Enemy enemy = getEnemyForFloor(player.floor);
+                        // Defeating the boss triggers victory; losing triggers game over.
+                        Enemy enemy = getEnemyForFloor(player.floor, player.difficulty);
                         encounter_combat(player, enemy);
-                        if (isDead(player)) gameOver = true;
-                        else room->type = EMPTY;
+                        if (isDead(player)) {
+                            gameOver = true;
+                        } else {
+                            room->type = EMPTY;
+                            if (player.floor == TOTAL_FLOORS) won = true;
+                        }
                         break;
                     }
-
                     case TREASURE: {
                         int idx = rand() % NUM_ITEMS;
                         Item* loot = new Item(ITEMS_LIST[idx]);
@@ -181,15 +185,15 @@ int main() {
                     }
 
                     case LORE: {
-                        // show lore if not already found on this floor
-                        if (player.floor <= 9 && !player.loreFound[player.floor - 1]
-                            && loreFragments != nullptr) {
-                            player.loreFound[player.floor - 1] = true;
-                            player.loreCount++;
-                            showLoreScreen(loreFragments[player.floor - 1], false);
+                        if (loreFragments != nullptr && player.floor <= loreCount) {
+                            if (!player.loreFound[player.floor - 1]) {
+                                player.loreFound[player.floor - 1] = true;
+                                player.loreCount++;
                             }
-                        
-                        room->type = EMPTY;
+                            //no cipher button here, cipher is at EXIT
+                            showLoreScreen(loreFragments[player.floor - 1], false);
+                        }
+                        //do NOT set to EMPTY, room stays so player can return
                         break;
                     }
 
@@ -212,26 +216,15 @@ int main() {
                     }
 
                     case EXIT: {
-                        if (player.floor == TOTAL_FLOORS) {
-                            // boss fight on floor 10
-                            Enemy cerberus = getEnemyForFloor(10);
-                            encounter_combat(player, cerberus);
-                            if (isDead(player)) {
-                                gameOver = true;
-                            } else {
-                                won = true;
-                            }
+                        // Floors 1-9: solve cipher to advance.
+                        bool cipherOpensExit = false;
+                        PuzzleResult cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
+                        if (cr == SOLVED) {
+                            player.floor++;
+                            floorDone = true;
                         } else {
-                            bool cipherOpensExit = false;
-                            PuzzleResult cr = runLoreCipher(player.floor, player.difficulty, cipherOpensExit);
-                            if (cr == SOLVED) {
-                                player.floor++;
-                                floorDone = true;
-                            } else {
-                                cout << RED << "  The exit remains sealed." << RESET << endl;
-                                cin.ignore(10000, '\n');
-                            }
-        
+                            cout << RED << "  The exit remains sealed." << RESET << endl;
+                            cin.ignore(10000, '\n');
                         }
                         break;
                     }
@@ -244,6 +237,7 @@ int main() {
             freeFloor(floor);
         }
 
+        
         // game over
         if (gameOver) {
             if (player.difficulty == HARD) deleteSave();
@@ -252,15 +246,19 @@ int main() {
             char retry;
             cin >> retry;
             cin.ignore(10000, '\n');
-            // R retries, anything else goes back to title
+
             if (toupper(retry) == 'R') {
-                for (int i = 0; i < player.inventorySize; i++) {
+                //free inventory and fully reset player for retry
+                for (int i = 0; i < player.inventorySize; i++)
                     delete player.inventory[i];
-                }
-                initPlayer(player, player.name, player.difficulty);
+                string savedName = player.name;
+                Difficulty savedDiff = player.difficulty;
+                initPlayer(player, savedName, savedDiff);
                 gameOver = false;
                 won = false;
+                // loop continues — new run, same name and difficulty
             }
+            // any other key falls through and returns to title screen
         }
 
         // victory

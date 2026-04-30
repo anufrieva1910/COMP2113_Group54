@@ -3,11 +3,11 @@
 #include "dungeon.h"
 #include <iostream>
 #include <unistd.h>
+#include <fstream>
 using namespace std;
 
-// combat log buffer. keeps last 2 lines
-static string logLine1 = "";
-static string logLine2 = "";
+// combat log buffer — keeps last 4 lines
+static string combatLog[4] = {"", "", "", ""};
 
 void clearScreen() {
     cout << "\033[2J\033[H";
@@ -79,7 +79,7 @@ string getEnemyArt(const string &enemyName) {
         " /'` ' `'\\\n"
         " |'''''''|\n"
         " |\\\\'''//|\n"
-        "    \"\"\"";
+        "   \"\"\"";
 
     if (enemyName == "Phantom Direwolf") return
         "   / \\__\n"
@@ -110,34 +110,20 @@ char showTitleScreen() {
 
     cout << "=================================================================" << endl;
     cout << endl;
-    cout << "                     /)-._" << endl;
-    cout << "                     . ' _]" << endl;
-    cout << "            ,.._    |`--\"=" << endl;
-    cout << "           /    \"-/     \\" << endl;
-    cout << " /)       |    |_      `\\|___" << endl;
-    cout << " \\::::::::\\____/ \\__\\________\\" << endl;
+    cout << "                        /)-._                                        ," << endl;
+    cout << "                        . ' _]                                       |`-.__" << endl;
+    cout << "               ,.._    |`--\"=          C E R B E R U S ' S          /   _/" << endl;
+    cout << "              /    \"-/     \\                C A V E                ****`" << endl;
+    cout << "  /)          |    |_      `\\|___                                 /    }" << endl;
+    cout << "  \\:::::::::\\____/ \\__\\________\\   ~ dungeon crawler ~           /  \\ /" << endl;
+    cout << "                                                              \\ /`   \\\\\\     " << endl;
+    cout << "                                                               `\\    /_\\\\" << endl;
+    cout << "                                                                `~~~~~``~`" << endl;
     cout << endl;
-    cout << "                   ,                    " << endl;
-    cout << "                   |`-.__               " << endl;
-    cout << "                   /   _/               " << endl;
-    cout << "                  ****`                 " << endl;
-    cout << "                 /    }                 " << endl;
-    cout << "                /  \\ /                  " << endl;
-    cout << "            \\ /`   \\\\\\                 " << endl;
-    cout << "             `\\    /_\\\\                " << endl;
-    cout << "              `~~~~~``~`               " << endl;
+    cout << "       uncover the truth behind Cerberus, one wall at a time." << endl;
     cout << endl;
-
-    // game title typewriter
-    typewrite("              C E R B E R U S ' S   C A V E", 30);
-    cout << endl;
-    cout << "    a story-driven terminal dungeon crawler" << endl;
-    cout << "    uncover the truth behind Cerberus, one wall at a time." << endl;
-    cout << endl;
-    cout << "    [ N ]  New Game" << endl;
-    cout << "    [ L ]  Load Game" << endl;
-    cout << "    [ S ]  Leaderboard" << endl;
-    cout << "    [ Q ]  Quit" << endl;
+    cout << "    [ N ]  New Game     [ L ]  Load Game" << endl;
+    cout << "    [ S ]  Leaderboard  [ Q ]  Quit" << endl;
     cout << endl;
     cout << "=================================================================" << endl;
     cout << "  > ";
@@ -209,23 +195,28 @@ void showFloorEntry(int floorNum, const LoreFragment &fragment) {
     cout << "=================================================================" << endl;
     cout << endl;
 
-    // floor title typewriter
     string title = "  Floor " + to_string(floorNum) + " -- " + fragment.title;
     typewrite(title, 25);
     cout << endl;
 
-    // atmospheric paragraph typewriter
-    // the first paragraph in fragment.text
-    string text = fragment.text;
-    string entry = "";
-    int wallPos = text.find("[WALL ART]");
-    int diaryPos = text.find("[LOST SCHOLAR");
-    int cutPos = (int)text.length();
-    if (wallPos != (int)string::npos) cutPos = min(cutPos, wallPos);
-    if (diaryPos != (int)string::npos) cutPos = min(cutPos, diaryPos);
-    entry = text.substr(0, cutPos);
+    // fragment.intro contains: atmospheric paragraph + diary, separated by ---DIARY---
+    // We only show the atmospheric paragraph here (everything before ---DIARY---)
+    string intro = fragment.intro;
+    size_t sep = intro.find("---DIARY---");
+    string atmospheric = (sep != string::npos) ? intro.substr(0, sep) : intro;
 
-    typewrite(fragment.intro, 18);
+    // trim trailing newlines
+    while (!atmospheric.empty() && atmospheric[atmospheric.size()-1] == '\n')
+        atmospheric.erase(atmospheric.size()-1);
+
+    if (!atmospheric.empty()) {
+        typewrite(atmospheric, 15);
+    } else {
+        // diary-only floors (6, 7): show a brief atmospheric line
+        typewrite("  The walls are bare here. No carvings. No paintings.", 15);
+        typewrite("  But wedged into a crack near the ground, you find a journal.", 15);
+    }
+
     cout << endl;
     cout << "  Press Enter to continue...";
     cin.ignore(10000, '\n');
@@ -242,11 +233,48 @@ void showCombatScreen(const Player &player, const Enemy &enemy, const std::strin
     cout << "  COMBAT  --  Floor " << player.floor << endl;
     cout << "=================================================================" << endl;
     cout << endl;
-    cout << "   /\\_/\\                         " << enemy.name << endl;
-    cout << "  ( o o )        VS" << endl;
-    cout << "   > ^ <" << endl;
-    cout << endl;
-    cout << enemyArt << endl;
+
+    // split enemyArt into lines so we can print cat and enemy side by side
+    string artLines[12];
+    int artCount = 0;
+    string buf = "";
+    for (int i = 0; i <= (int)enemyArt.length(); i++) {
+        if (i == (int)enemyArt.length() || enemyArt[i] == '\n') {
+            if (artCount < 12) artLines[artCount++] = buf;
+            buf = "";
+        } else {
+            buf += enemyArt[i];
+        }
+    }
+
+    // cat art lines (left column, fixed width 22)
+    const string catLines[] = {
+        "   /\\_/\\",
+        "  ( o o )      VS",
+        "   > ^ <",
+        "",
+        "",
+        ""
+    };
+    const int CAT_LINES = 6;
+    const int COL_WIDTH = 22;
+
+    // first line: enemy name appears top-right
+    cout << "   /\\_/\\";
+    for (int p = 7; p < COL_WIDTH; p++) cout << " ";
+    cout << "  " << RED << enemy.name << RESET << endl;
+
+    // remaining side-by-side rows
+    int totalLines = (CAT_LINES > artCount) ? CAT_LINES : artCount;
+    for (int i = 1; i < totalLines; i++) {
+        string left  = (i < CAT_LINES) ? catLines[i] : "";
+        string right = (i < artCount)  ? artLines[i]  : "";
+        cout << left;
+        int pad = COL_WIDTH - (int)left.length();
+        for (int p = 0; p < pad; p++) cout << " ";
+        cout << "  " << right << endl;
+    }
+
     cout << endl;
     cout << "-----------------------------------------------------------------" << endl;
     cout << "  " << YELLOW << "[YOU]" << RESET
@@ -267,13 +295,19 @@ void showCombatScreen(const Player &player, const Enemy &enemy, const std::strin
 }
 
 void addCombatLog(const string &line) {
-    logLine1 = logLine2;
-    logLine2 = line;
+    combatLog[0] = combatLog[1];
+    combatLog[1] = combatLog[2];
+    combatLog[2] = combatLog[3];
+    combatLog[3] = line;
 }
 
 void showCombatLog() {
-    if (!logLine1.empty()) cout << "  " << logLine1 << endl;
-    if (!logLine2.empty()) cout << "  " << logLine2 << endl;
+    for (int i = 0; i < 4; i++)
+        if (!combatLog[i].empty()) cout << "  " << combatLog[i] << endl;
+}
+
+void clearCombatLog() {
+    for (int i = 0; i < 4; i++) combatLog[i] = "";
 }
 
 void showLoreScreen(const LoreFragment &fragment, bool cipherAvailable) {
@@ -284,14 +318,29 @@ void showLoreScreen(const LoreFragment &fragment, bool cipherAvailable) {
     cout << "-----------------------------------------------------------------" << endl;
     cout << endl;
 
-    typewrite(fragment.text, 18);
+    // Wall art (fragment.text)
+    if (!fragment.text.empty()) {
+        cout << "  [ WALL ART ]" << endl << endl;
+        typewrite(fragment.text, 12);
+        cout << endl;
+    }
 
-    cout << endl;
+    // Scholar diary — extract from fragment.intro after ---DIARY--- separator
+    string intro = fragment.intro;
+    size_t sep = intro.find("---DIARY---");
+    string diary = (sep != string::npos) ? intro.substr(sep + 11) : "";
+
+    // trim leading newline from diary
+    while (!diary.empty() && diary[0] == '\n') diary.erase(0, 1);
+
+    if (!diary.empty()) {
+        cout << "  [ LOST SCHOLAR'S DIARY ]" << endl << endl;
+        typewrite(diary, 12);
+        cout << endl;
+    }
+
     cout << "-----------------------------------------------------------------" << endl;
-    if (cipherAvailable)
-        cout << "  [ C ] Attempt cipher        [ X ] Leave" << endl;
-    else
-        cout << "  [ X ] Leave" << endl;
+    cout << "  [ X ] Leave" << endl;
     cout << "=================================================================" << endl;
     cout << "  > ";
 
@@ -363,49 +412,43 @@ void showGameOver(const Player &player) {
 void showVictory(const Player &player) {
     clearScreen();
     (void)player;
+
+    // read ENDING_START...ENDING_END block from lore.txt
+    string endingLines[300];
+    int endingCount = 0;
+
+    ifstream loreFile("data/lore.txt");
+    if (loreFile.is_open()) {
+        string line;
+        bool inEnding = false;
+        while (getline(loreFile, line) && endingCount < 298) {
+            if (line == "ENDING_START") { inEnding = true; continue; }
+            if (line == "ENDING_END")   { break; }
+            if (inEnding) endingLines[endingCount++] = line;
+        }
+        loreFile.close();
+    }
+
     cout << "=================================================================" << endl;
     cout << endl;
 
-    // ending dialogue from lore.txt ENDING block. typewritten line by line
-    const char* lines[] = {
-        "  The cave falls quiet after the final blow. Not the quiet of",
-        "  emptiness -- the quiet of something finally finished.",
-        "",
-        "  The dark force lifts slowly. What remains on the ground is",
-        "  small. Trembling. A puppy, barely older than a few months.",
-        "",
-        "  You sheathe your weapon.",
-        "",
-        "  Kyon: \"...where... where am I...\"",
-        "",
-        "  Warrior: \"You're safe. It's over.\"",
-        "",
-        "  Kyon: \"I couldn't stop it... she kept talking and I couldn't",
-        "         make it stop... everything was so loud...\"",
-        "",
-        "  Warrior: \"I know. I read the walls. All of them.\"",
-        "",
-        "  Kyon: \"Did I... did I hurt people...?\"",
-        "",
-        "  Warrior: \"Yes. But that wasn't you. That was what she turned you into.\"",
-        "",
-        "  Kyon: \"...is there a difference?\"",
-        "",
-        "  Warrior: \"There will be. When they know the truth, there will be.\"",
-        "",
-        "  Kyon: \"...I had a name. Before all this. I think I had a name.\"",
-        "",
-        "  Warrior: \"Kyon Khryseos. The Golden Hound. I know.\"",
-        "",
-        "  Kyon: \"...will you stay? Just for a moment.\"",
-        "",
-        "  Warrior: \"As long as you need.\"",
-        nullptr
-    };
+    for (int i = 0; i < endingCount; i++) {
+        const string &ln = endingLines[i];
 
-    for (int i = 0; lines[i] != nullptr; i++) {
-        typewrite(string(lines[i]), 20);
-        if (lines[i][0] == '\0') usleep(300000); // small pause on blank lines
+        if (ln.empty() || ln == "---") {
+            cout << endl;
+            usleep(700000);   // pause on blank lines / section breaks
+            continue;
+        }
+
+        bool isDialogue = (ln.find("Kyon:")    != string::npos ||
+                           ln.find("Warrior:") != string::npos ||
+                           ln.find("Bastet:")  != string::npos);
+
+        cout << "  ";
+        typewrite(ln, isDialogue ? 28 : 18);
+
+        if (isDialogue) usleep(500000);   // extra pause after each spoken line
     }
 
     cout << endl;
