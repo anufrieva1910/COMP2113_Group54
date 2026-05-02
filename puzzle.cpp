@@ -251,7 +251,7 @@ PuzzleResult runSymbolMatch(Difficulty difficulty, bool hard) {
     printSeperator();
     cout << endl;
     cout << "  Ancient carvings glow faintly on the wall." << endl;
-    cout << "  Study the sequence carefully. It will not stay long." << endl;
+    cout << "  Study the sequence carefully." << endl;
     cout << endl;
 
     cout << "  [ ";
@@ -266,7 +266,7 @@ PuzzleResult runSymbolMatch(Difficulty difficulty, bool hard) {
 
     for (int i = 0; i < 15; i++) cout << endl;
 
-    cout << "  The carvings go dark." << endl << endl;
+    cout << "  Using these codes" << endl << endl;
     cout << "  Symbols:  A=SUN   B=MOON   C=PAW   D=EYE   E=FLAME" << endl << endl;
     cout << "  Reproduce the sequence (e.g. C A D)." << endl;
     cout << "  Type S to skip (costs " << getSkipPenalty(difficulty) << " gold)." << endl;
