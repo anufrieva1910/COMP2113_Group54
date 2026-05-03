@@ -23,13 +23,14 @@ void turn_change(string &turn) {
     }
 }
 
+// starting turn is randomized between player and enemy
 void randomize_start(string &turn) {
     turn= (rand()%2) ? "player" : "enemy";
 }
 
 
 void useItem(Player &player) {
-    //pops up inventory menu
+    // pops up inventory menu
     int result = showInventory(player);
     if (result >= 0 && result < player.inventorySize) {
         Item* used_item = player.inventory[result];
